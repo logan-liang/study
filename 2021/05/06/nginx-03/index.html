@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Nginx标准HTTP模块 | Logan的博客</title>
+  <meta name="description" content="HTTP核心模块Nginx处理HTTP的核心功能模块 指令 alias ：alias file-path|directory-path;  使用字段：location 这个指令指定一个路径使用某个某个，注意它可能类似于root，但是document root没有改变，请求只是使用了别名目录的文件。 123location  &#x2F;i&#x2F; &amp;#123;  alias  &#x2F;sp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx标准HTTP模块">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/05/06/nginx-03/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="HTTP核心模块Nginx处理HTTP的核心功能模块 指令 alias ：alias file-path|directory-path;  使用字段：location 这个指令指定一个路径使用某个某个，注意它可能类似于root，但是document root没有改变，请求只是使用了别名目录的文件。 123location  &#x2F;i&#x2F; &amp;#123;  alias  &#x2F;sp">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-05-06T09:25:14.000Z">
+<meta property="article:modified_time" content="2021-05-06T09:25:14.660Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="Nginx">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/05/06/nginx-03/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL-%E5%85%A5%E9%97%A8/">GraphQL 入门</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/Nginx/">Nginx</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E4%BF%A1%E9%81%93/">信道</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%86%85%E9%83%A8%E5%8C%85/">内部包</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%87%BD%E6%95%B0/">函数</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">基本结构和基本数据类型</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">性能调优</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/">控制结构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/">数组与切片</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/">锁的应用</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL/" rel="tag">GraphQL</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/Golang/" style="font-size: 14px;">Golang</a> <a href="/study/tags/GraphQL/" style="font-size: 13px;">GraphQL</a> <a href="/study/tags/Nginx/" style="font-size: 13px;">Nginx</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Nginx/">Nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/nginx-03/" class="title">Nginx标准HTTP模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T09:25:14.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Nginx/">Nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/nginx-02/" class="title">Nginx核心模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T05:55:18.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Nginx/">Nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/nginx-01/" class="title">Nginx基础</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T02:26:37.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/%E4%BF%A1%E9%81%93/">信道</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/go-channel/" class="title">Channel</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T01:14:49.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/">锁的应用</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/04/26/go-mutex-and-wg/" class="title">同步锁、读写锁、WaitGroup</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-04-26T06:55:30.000Z" itemprop="datePublished">2021-04-26</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="darft-nginx-03" class="article article-type-darft" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx标准HTTP模块
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/05/06/nginx-03/" class="article-date">
+	  <time datetime="2021-05-06T09:25:14.000Z" itemprop="datePublished">2021-05-06</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/Nginx/">Nginx</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/Nginx/" rel="tag">Nginx</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/05/06/nginx-03/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="HTTP核心模块"><a href="#HTTP核心模块" class="headerlink" title="HTTP核心模块"></a>HTTP核心模块</h2><p>Nginx处理HTTP的核心功能模块</p>
+<h3 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h3><ul>
+<li><code>alias</code> ：alias file-path|directory-path;</li>
+</ul>
+<p>使用字段：location</p>
+<p>这个指令指定一个路径使用某个某个，注意它可能类似于root，但是document root没有改变，请求只是使用了别名目录的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location  &#x2F;i&#x2F; &#123;</span><br><span class="line">  alias  &#x2F;spool&#x2F;w3&#x2F;images&#x2F;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上个例子中，请求<code>/i/top.gif</code>将返回这个文件：<code>/spool/w3/images/top.gif</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ~ ^&#x2F;download&#x2F;(.*)$ &#123;</span><br><span class="line">  alias &#x2F;home&#x2F;website&#x2F;files&#x2F;$1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请求<code>/download/book.pdf</code>将返回<code>/home/website/files/book.pdf</code>。<br>同样，也可以在别名目录字段中使用变量。</p>
+<ul>
+<li><code>client_body_in_file_only</code>：client_body_in_file_only on|off</li>
+</ul>
+<p>使用字段：http、server、location</p>
+<p>这个指令始终存储一个连接请求实体到一个文件即使它只有0字节。</p>
+<ul>
+<li><code>client_body_in_single_buffer</code>：client_body_in_single_buffer on|off</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>该指令指定是否将客户端连接请求完整的放入一个缓冲区，当使用变量$request_body时推荐使用这个指令以减少复制操作。如果无法将一个请求放入单个缓冲区，将会被放入磁盘。</p>
+<ul>
+<li><code>client_body_buffer_size</code>：client_body_buffer_size the_size</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个指令可以指定连接请求实体的缓冲区大小。如果连接请求超过缓存区指定的值，那么这些请求实体的整体或部分将尝试写入一个临时文件。默认值为两个内存分页大小值，根据平台的不同，可能时8k或16k。</p>
+<ul>
+<li><code>client_body_temp_path</code>：client_body_temp_path dir-path [ level1 [ level2 [ level3 ]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令指定连接请求实体试图写入的临时文件路径。</p>
+<ul>
+<li><code>client_body_timeout</code>：client_body_timeout time</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令指定读取请求实体的超时时间。默认值：60</p>
+<ul>
+<li><code>client_header_buffer_size</code>：client_header_buffer_size size</li>
+</ul>
+<p>使用字段：http, server</p>
+<p>指令指定客户端请求头部的缓冲区大小<br>绝大多数情况下一个请求头不会大于1k。</p>
+<ul>
+<li><code>client_header_timeout</code>：client_header_timeout time</li>
+</ul>
+<p>使用字段：http, server</p>
+<p>指令指定读取客户端请求头标题的超时时间。</p>
+<ul>
+<li><code>client_max_body_size</code>：client_max_body_size size</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令指定允许客户端连接的最大请求实体大小，它出现在请求头部的Content-Length字段。如果请求大于指定的值，客户端将收到一个”Request Entity Too Large”（413）错误。</p>
+<ul>
+<li><code>default_type</code>：default_type MIME-type</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>某个文件在标准MIME视图没有指定的情况下的默认MIME类型。</p>
+<ul>
+<li><code>directio</code>：directio [size|off]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个参数指定在读取文件大小大于指定值的文件时使用O_DIRECT，F_NOCACHE或者调用directio()函数，当一个请求用到这个参数时会金庸sendfile，通常这个参数用于大文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">directio  4m;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>error_page</code>：error_page code [ code… ] [ = | =answer-code ] uri | @named_location</li>
+</ul>
+<p>使用字段：http, server, location, location 中的if字段</p>
+<p>这个参数可以为错误代码指定相应的错误页面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">error_page   404          &#x2F;404.html;</span><br><span class="line">error_page   502 503 504  &#x2F;50x.html;</span><br><span class="line">error_page   403          http:&#x2F;&#x2F;example.com&#x2F;forbidden.html;</span><br><span class="line">error_page   404          &#x3D; @fetch;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>if_modified_since</code>：if_modified_since [off|exact|before]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令定义如何将文件最后修改时间与请求头中的”If-Modified_Since”时间相比较。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">·off ：不检查请求头中的&quot;If-Modified-Since&quot;（0.7.34）。</span><br><span class="line">·exact：精确匹配</span><br><span class="line">·before：文件修改时间应小于请求头中的&quot;If-Modified-Since&quot;时间</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>internal</code>：internal</li>
+</ul>
+<p>使用字段： location</p>
+<p>internal指定指定某个location只能被内部的请求调用，外部的调用请求会返回”Not Found”(404)。</p>
+<ul>
+<li><code>keepalive_timeout</code>：keepalive_timeout [ time ] [ time ]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>参数的第一个值制定了客户端与服务器长连接的超时时间，超过这个时间，服务器将关闭连接。<br>参数的第二个值指定了应答头中Keep-Alice:timeout=time的time值，这个值可以使一些浏览器知道什么时候关闭连接，以便服务器不用重复关闭，如果不指定这个参数，nginx不会在应答头中发送Keep-Alive信息。</p>
+<ul>
+<li><code>keepalive_requests</code>：keepalive_requests n</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>服务器保持长连接的请求数。<code>keepalive_requests 100</code></p>
+<ul>
+<li><code>large_client_header_buffers</code>：large_client_header_buffers number size</li>
+</ul>
+<p>使用字段：http, server</p>
+<p>指定客户端一些比较大的请求头使用的缓冲区数量和大小。</p>
+<p>请求字段不能大于一个缓冲区大小，如果客户端发送一个比较大的头，nginx将返回”Request URI too large”(414)<br>同样，请求的头部最长字段不能大于一个缓冲区，否则服务器将返回”Bad request” (400)。<br>缓冲区只在需求时分开。<br>默认一个缓冲区大小为操作系统中分页文件大小，通常是4k或8k，如果一个连接请求最终将状态转换为keep-alive，它所占用的缓冲区将被释放。</p>
+<ul>
+<li><code>limit_except</code>：limit_except methods {…}</li>
+</ul>
+<p>使用字段：location</p>
+<p>指令可以在location字段中做一些http动作的限制。</p>
+<p>ngx_http_access_module和ngx_http_auth_basic_module模块有很强的访问控制功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">limit_except  GET &#123;</span><br><span class="line">  allow  192.168.1.0&#x2F;32;</span><br><span class="line">  deny   all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>limit_rate</code>：limit_rate speed</li>
+</ul>
+<p>使用字段：http, server, location, location中的if字段</p>
+<p>限制将应答传送到客户端的速度，单位为字节/秒，限制仅对一个连接有效，即如果一个客户端打开2个连接，则它的速度是这个值乘以二。</p>
+<p>由于一些不同的状况，可能要在server字段来限制部分连接的速度，那么这个参数并不适用，不过你可以选择设置$limit_rate变量的值来达到目的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  if ($slow) &#123;</span><br><span class="line">    set $limit_rate  4k;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>limit_rate_after</code>：limit_rate_after time</li>
+</ul>
+<p>使用字段：http, server, location, location中的if字段</p>
+<p>在应答一部分被传递后限制速度：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">limit_rate_after 1m;</span><br><span class="line">limit_rate 100k;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>listen</code>：listen address:port [ default_server [ backlog=num | rcvbuf=size | sndbuf=size | accept_filter=filter | deferred | bind | ssl ] ]</li>
+</ul>
+<p>使用字段：server</p>
+<p>listen指定了server{…}字段中可以被访问到的ip地址及端口号，可以只指定一个ip，一个端口，或者一个可解析的服务器名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">listen 127.0.0.1:8000;</span><br><span class="line">listen 127.0.0.1;</span><br><span class="line">listen 8000;</span><br><span class="line">listen *:8000;</span><br><span class="line">listen localhost:8000;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>location</code>：location [=|<del>|</del>*|^~|@] /uri/ { … }</li>
+</ul>
+<p>使用字段：server</p>
+<p>这个参数根据URI的不同需求来进行配置，可以使用字符串与正则表达式匹配，如果要使用正则表达式，你必须指定下列前缀：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#96;~*&#96; 不区分大小写</span><br><span class="line">&#96;~&#96;  区分大小写</span><br><span class="line">&#96;^~&#96; 禁止在字符串匹配后检查正则表达式，如果最确切的匹配location有这个标记，那么正则表达式不会被检查。</span><br><span class="line">&#96;&#x3D;&#96;  可以在URI和location之间定义精确的匹配，在精确匹配完成后并不进行额外的搜索，例如有请求&quot;&#x2F;&quot;发生，则可以使用&quot;location &#x3D; &#x2F;&quot;来加速这个处理。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>log_not_found</code>：log_not_found [on|off]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令指定是否将一些文件没有找到的错误信息写入error_log指定的文件中。</p>
+<ul>
+<li><code>log_subrequest</code>：log_subrequest [on|off]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令指定是否将一些经过rewrite rules和SSI requests的子请求日志写入access_log指定的文件中。</p>
+<ul>
+<li><code>open_file_cache</code>：open_file_cache max = N [inactive = time] | off</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指定缓存是否启用，如果启用，将记录文件以下信息：<br>1、打开的文件描述符，大小信息和修改时间。<br>2、存在的目录信息。<br>3、在搜索文件过程中的错误信息–没有这个文件、无法正确读取。</p>
+<ul>
+<li><code>open_file_cache_errors</code>：open_file_cache_errors on | off</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个指令指定是否在搜索一个文件是记录cache错误。</p>
+<ul>
+<li><code>open_file_cache_min_uses</code>：open_file_cache_min_uses number</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个指令指定了在open_file_cache指令无效的参数中一定的时间范围内可以使用的最小文件数，如果使用更大的值，文件描述符在cache中总是打开状态。</p>
+<ul>
+<li><code>open_file_cache_valid</code>：open_file_cache_valid time</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个指令指定了何时需要检查open_file_cache中缓存项目的有效信息。</p>
+<ul>
+<li><code>optimize_server_names</code>：optimize_server_names [ on|off ]</li>
+</ul>
+<p>使用字段：http, server</p>
+<p>这个指令指定是否在基于域名的虚拟主机中开启最优化的主机名检查。</p>
+<ul>
+<li><code>port_in_redirect</code>：port_in_redirect [ on|off ]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个指令指定是否在让nginx在重定向操作中对端口进行操作。<br>如果这个指令设置为off，在重定向的请求中nginx不会在url中添加端口。</p>
+<ul>
+<li><code>recursive_error_pages</code>：recursive_error_pages [on|off]</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>recursive_error_pages指定启用除第一条error_page指令以外其他的error_page。</p>
+<ul>
+<li><code>resolver</code>：resolver address</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指定DNS服务器地址，如：<code>resolver 127.0.0.1;</code>。</p>
+<ul>
+<li><code>resolver_timeout</code>：resolver_timeout time</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>解析超时时间。如：<code>resolver_timeout 5s;</code>。</p>
+<ul>
+<li><code>root</code>：root path</li>
+</ul>
+<p>使用字段：http, server, location ,location中的if字段</p>
+<p>请求到达后的文件根目录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location  &#x2F;i&#x2F; &#123;</span><br><span class="line">  root  &#x2F;spool&#x2F;w3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>satisfy_any</code>：satisfy_any [ on|off ]</li>
+</ul>
+<p>使用字段：location</p>
+<p>指令可以检查至少一个成功的密码校验，它在NginxHttpAccessModule或NginxHttpAuthBasicModule这两个模块中执行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location &#x2F; &#123;</span><br><span class="line">  satisfy_any  on;</span><br><span class="line">  allow  192.168.1.0&#x2F;32;</span><br><span class="line">  deny   all;</span><br><span class="line">  auth_basic            &quot;closed site&quot;;</span><br><span class="line">  auth_basic_user_file  conf&#x2F;htpasswd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>send_timeout</code>：send_timeout the time</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>指令指定了发送给客户端应答后的超时时间，Timeout是指没有进入完整established状态，只完成了两次握手，如果超过这个时间客户端没有任何响应，nginx将关闭连接。</p>
+<ul>
+<li><code>server</code>：server {…}</li>
+</ul>
+<p>使用字段：http</p>
+<p>server字段包含虚拟主机的配置</p>
+<p>*<code>server_name</code>：server_name name [… ]</p>
+<p>使用字段：server</p>
+<p>这个指令有两个作用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1、将http请求的主机头与在nginx配置文件中的server&#123;...&#125;字段中指定的参数进行匹配，并且找出第一个匹配结果。遵循以下优先级规则：</span><br><span class="line">完整匹配的名称；</span><br><span class="line">名称开始于一个文件通配符：*.example.com；</span><br><span class="line">名称结束于一个文件通配符：www.example.*；</span><br><span class="line">使用正则表达式的名称。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>types</code>：types {…}</li>
+</ul>
+<p>使用字段：http, server, location</p>
+<p>这个字段指定一些扩展的文件对应方式与应答的MIME类型，一个MIME类型可以有一些与其类似的扩展，默认使用以下文件对应方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">types &#123;</span><br><span class="line">  text&#x2F;html    html;</span><br><span class="line">  image&#x2F;gif    gif;</span><br><span class="line">  image&#x2F;jpeg   jpg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>core module 支持一些内置的变量，与apache使用的变量相一致。</p>
+<ul>
+<li><code>$arg_PARAMETER</code> 这个变量包含在查询字符串时GET请求PARAMETER的值。</li>
+<li><code>$args</code> 这个变量等于请求行中的参数。</li>
+<li><code>$binary_remote_addr</code> 二进制码形式的客户端地址。</li>
+<li><code>$content_length</code> 请求头中的Content-length字段。</li>
+<li><code>$content_type</code> 请求头中的Content-Type字段。</li>
+<li><code>$cookie_COOKIE</code> cookie COOKIE的值。</li>
+<li><code>$document_root</code> 当前请求在root指令中指定的值。</li>
+<li><code>$document_uri</code>  与$uri相同。</li>
+<li><code>$host</code> 请求中的主机头字段，如果请求中的主机头不可用，则为服务器处理请求的服务器名称。</li>
+<li><code>$is_args</code> 如果$args设置，值为”?”，否则为””。</li>
+<li><code>$limit_rate</code> 这个变量可以限制连接速率。</li>
+<li><code>$query_string</code> 与$args相同。</li>
+<li><code>$remote_addr</code> 客户端的IP地址。</li>
+<li><code>$remote_port</code> 客户端的端口。</li>
+<li><code>$remote_user</code> 已经经过Auth Basic Module验证的用户名。</li>
+<li><code>$request_filename</code> 当前连接请求的文件路径，由root或alias指令与URI请求生成。</li>
+<li><code>$request_body</code> 这个变量（0.7.58+）包含请求的主要信息</li>
+<li><code>$request_body_file</code> 客户端请求主体信息的临时文件名。</li>
+<li><code>$request_method</code> 这个变量是客户端请求的动作，通常为GET或POST。</li>
+<li><code>$request_uri</code> 这个变量等于包含一些客户端请求参数的原始URI。</li>
+<li><code>$scheme</code> HTTP方法（如http，https）。</li>
+<li><code>$server_addr</code> 服务器地址</li>
+<li><code>$server_name</code> 服务器名称。</li>
+<li><code>$server_port</code> 请求到达服务器的端口号。</li>
+<li><code>$uri</code> 请求中的当前URI(不带请求参数，参数位于$args)</li>
+</ul>
+<h2 id="HTTP负载均衡模块"><a href="#HTTP负载均衡模块" class="headerlink" title="HTTP负载均衡模块"></a>HTTP负载均衡模块</h2><p>这个模块为后端的服务器提供简单的负载均衡（轮询（round-robin）和连接IP（client IP））</p>
+<h3 id="指令-1"><a href="#指令-1" class="headerlink" title="指令"></a>指令</h3><ul>
+<li><code>ip_hash</code>：ip_hash</li>
+</ul>
+<p>使用字段：upstream</p>
+<p>这个指令将基于客户端连接的IP地址分发请求。</p>
+<ul>
+<li><code>server</code>：server name [parameters]</li>
+</ul>
+<p>使用字段：upstream</p>
+<p>指定后端服务器的名称和一些参数，可以使用域名、IP、端口或者unix socket。如果指定为域名，则首先将其解析为IP。<br>    * <code>weight =number</code> ：设置服务器权重，默认为1。<br>    * <code>max_fails=number</code>：在一定时间内检查这个服务器是否可用时产生的最多失败请求数，默认为1，将其设置为0可以关闭检查。<br>    * <code>fail_timeout=time</code>：在这时间产生了max_fails所设置大小的失败尝试连接请求后这个服务器可能不可用，同样它指定了服务器不可用的时间，默认为10秒。<br>    * <code>down</code>：标记服务器处理离线状态，通常和ip_hash一起使用。<br>    * <code>backup</code>：如果所有的非备份服务器都宕机或繁忙，则使用本服务器。（无法和ip_hash指令搭配使用）</p>
+<ul>
+<li><code>upstream</code>：upstream name { … }</li>
+</ul>
+<p>使用字段：http</p>
+<p>这个字段设置一群服务器，可以将这个字段放在proxy_pass和fastcgi_pass指令中作为一个单独的实体，他们可以是监听不同端口的服务器，并且也可以是同时监听TCP和Unix socket的服务器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upstream backend &#123;</span><br><span class="line">  server backend1.example.com weight&#x3D;5;</span><br><span class="line">  server 127.0.0.1:8080       max_fails&#x3D;3  fail_timeout&#x3D;30s;</span><br><span class="line">  server unix:&#x2F;tmp&#x2F;backend3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="变量-1"><a href="#变量-1" class="headerlink" title="变量"></a>变量</h3><ul>
+<li><code>$upstream_addr</code>：前端服务器处理请求的服务器地址</li>
+<li><code>$upstream_status</code>：前端服务器的响应状态。</li>
+<li><code>$upstream_response_time</code>： 前端服务器的应答时间，精确到毫秒，不同的应答以逗号和冒号分开。</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/05/06/nginx-03/" title="Nginx标准HTTP模块" target="_blank" rel="external">https://logan-liang.github.io/study/2021/05/06/nginx-03/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/study/2021/05/06/nginx-02/" title="Nginx核心模块"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/05/06/nginx-03/';
+        
+        this.page.identifier = 'nginx-03';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

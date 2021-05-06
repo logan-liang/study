@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>基本结构和要素 | Logan的博客</title>
-  <meta name="description" content="Quick Start包的概念、导入与可见性包是结构化代码的一种方式：买个程序都由包（pkg）的概念组成，可以使用自身的包或者从其它包中导入内容。每个Go文件都属于且仅属于一个包。一个包可以由许多以.go为扩展名的源文件组成，因此文件名和包名来说一般都是不相同的。 你必须在源文件中非注释的第一行指明这个文件属于哪个包，如package main。其表示一个可独立执行的程序，每个Go程序都包含一个名">
+  <title>Nginx核心模块 | Logan的博客</title>
+  <meta name="description" content="主模块包括一些nginx的基本控制功能 指令 daemon：daemon on |off  生产环境中不要使用daemon和master_process指令，这些指令仅用于开发调试。虽然可以使用daemon off在生产环境中，但对性能提升没有任何帮助。  env：env VAR|VAR&#x3D;VALUE  这个命令允许其限定一些环境变量的值。默认值：TZ  debug_points：debug_poi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基本结构和要素">
-<meta property="og:url" content="https://logan-liang.github.io/study/2021/03/06/one-basic-02/index.html">
+<meta property="og:title" content="Nginx核心模块">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/05/06/nginx-02/index.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="Quick Start包的概念、导入与可见性包是结构化代码的一种方式：买个程序都由包（pkg）的概念组成，可以使用自身的包或者从其它包中导入内容。每个Go文件都属于且仅属于一个包。一个包可以由许多以.go为扩展名的源文件组成，因此文件名和包名来说一般都是不相同的。 你必须在源文件中非注释的第一行指明这个文件属于哪个包，如package main。其表示一个可独立执行的程序，每个Go程序都包含一个名">
+<meta property="og:description" content="主模块包括一些nginx的基本控制功能 指令 daemon：daemon on |off  生产环境中不要使用daemon和master_process指令，这些指令仅用于开发调试。虽然可以使用daemon off在生产环境中，但对性能提升没有任何帮助。  env：env VAR|VAR&#x3D;VALUE  这个命令允许其限定一些环境变量的值。默认值：TZ  debug_points：debug_poi">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-03-06T10:46:17.000Z">
-<meta property="article:modified_time" content="2021-03-31T03:13:54.183Z">
+<meta property="article:published_time" content="2021-05-06T05:55:18.000Z">
+<meta property="article:modified_time" content="2021-05-06T05:55:18.831Z">
 <meta property="article:author" content="Logan">
-<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="Nginx">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://logan-liang.github.io/study/2021/03/06/one-basic-02/index.html">
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/05/06/nginx-02/index.html">
   
     <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
   
@@ -320,14 +320,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-one-basic-02" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="darft-nginx-02" class="article article-type-darft" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      基本结构和要素
+      Nginx核心模块
     </h1>
   
 
@@ -335,57 +335,155 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/study/2021/03/06/one-basic-02/" class="article-date">
-	  <time datetime="2021-03-06T10:46:17.000Z" itemprop="datePublished">2021-03-06</time>
+	<a href="/study/2021/05/06/nginx-02/" class="article-date">
+	  <time datetime="2021-05-06T05:55:18.000Z" itemprop="datePublished">2021-05-06</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/study/categories/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">基本结构和基本数据类型</a>
+    <a class="article-category-link" href="/study/categories/Nginx/">Nginx</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/study/tags/Golang/" rel="tag">Golang</a>
+	<a class="article-tag-link-link" href="/study/tags/Nginx/" rel="tag">Nginx</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/03/06/one-basic-02/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/05/06/nginx-02/#comments" class="article-comment-link">Comments</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="包的概念、导入与可见性"><a href="#包的概念、导入与可见性" class="headerlink" title="包的概念、导入与可见性"></a>包的概念、导入与可见性</h3><p>包是结构化代码的一种方式：买个程序都由包（pkg）的概念组成，可以使用自身的包或者从其它包中导入内容。每个Go文件都属于且仅属于一个包。一个包可以由许多以<code>.go</code>为扩展名的源文件组成，因此文件名和包名来说一般都是不相同的。</p>
-<p>你必须在源文件中非注释的第一行指明这个文件属于哪个包，如<code>package main</code>。其表示一个可独立执行的程序，每个Go程序都包含一个名为<code>main</code>的包。</p>
-<h4 id="标准库"><a href="#标准库" class="headerlink" title="标准库"></a>标准库</h4><p>在Go的安装文件里包含了一些可以直接使用的包，即标准库。在windows下，标准库的位置在Go根目录下的子目录<code>pkg\windows_386</code>中；在Linux下，标准库在Go根目录下的子目录<code>pkg\linux_amd64</code>中。一般情况下，标准包会存放在<code>$GOROOT/pkg/$GOOS_$GOARCH/</code>目录下。</p>
-<p>Go 的标准库包含了大量的包（如：fmt 和 os），但是你也可以创建自己的包（第 9 章）。</p>
-<p>如果想要构建一个程序，则包和包内的文件都必须以正确的顺序进行编译。包的依赖关系决定了其构建顺序。</p>
-<p>属于同一个包的源文件必须全部被一起编译，一个包即是编译时的一个单元，因此根据惯例，每个目录都只包含一个包。</p>
-<p><code>如果对一个包进行更改或重新编译，所有引用了这个包的客户端程序都必须全部重新编译。</code></p>
-<p>Go 中的包模型采用了显式依赖关系的机制来达到快速编译的目的，编译器会从后缀名为 .o 的对象文件（需要且只需要这个文件）中提取传递依赖类型的信息。</p>
-<p>如果 <code>A.go</code> 依赖 <code>B.go</code>，而 <code>B.go</code> 又依赖 <code>C.go</code>：</p>
-<ul>
-<li>编译 <code>C.go</code>, <code>B.go</code>, 然后是 <code>A.go</code>.</li>
-<li>为了编译 <code>A.go</code>, 编译器读取的是 <code>B.o</code> 而不是 <code>C.o</code>.</li>
+        <h3 id="主模块"><a href="#主模块" class="headerlink" title="主模块"></a>主模块</h3><p>包括一些nginx的基本控制功能</p>
+<h4 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h4><ul>
+<li><code>daemon</code>：daemon on |off</li>
 </ul>
-<p>这种机制对于编译大型的项目时可以显著地提升编译速度。    </p>
-<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>这是定义一个函数最简单的格式：</p>
-<p><code>    func funcName()</code></p>
-<p>你可以在括号 <code>()</code> 中写入 <code>0</code> 个或多个函数的参数（使用逗号 <code>,</code> 分隔），每个参数的名称后面必须紧跟着该参数的类型。</p>
-<p>main 函数是每一个可执行程序所必须包含的，一般来说都是在启动后第一个执行的函数（如果有 init() 函数则会先执行该函数）。如果你的 main 包的源代码没有包含 main 函数，则会引发构建错误 <code>undefined: main.main</code>。main 函数既没有参数，也没有返回类型（与 C 家族中的其它语言恰好相反）。如果你不小心为 main 函数添加了参数或者返回类型，将会引发构建错误</p>
-<h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><pre><code>- 单行注释 `//我是注释`
-- 多行注释 `/*我是注释*/`
+<p>生产环境中不要使用<code>daemon</code>和<code>master_process</code>指令，这些指令仅用于开发调试。虽然可以使用<code>daemon off</code>在生产环境中，但对性能提升没有任何帮助。</p>
+<ul>
+<li><code>env</code>：env VAR|VAR=VALUE</li>
+</ul>
+<p>这个命令允许其限定一些环境变量的值。默认值：TZ</p>
+<ul>
+<li><code>debug_points</code>：debug_points stop</li>
+</ul>
+<p>在nginx内部有很多断言，如果debug_points的值设为stop时，那么触发断言时将停止Nginx并附加调试器。如果debug_points的值为abort，那么触发断言时将创建内核文件。默认值：none（无）</p>
+<ul>
+<li><code>error_log</code>：error_log file [ debug | info | notice | warn | error | crit ]</li>
+</ul>
+<p>指定Nginx服务（与FastCGI）错误日志文件位置。可以设置等级。默认值：${prefix}/logs/error.log</p>
+<ul>
+<li><code>log_not_found</code>：log_not_found on | off</li>
+</ul>
+<p>使用字段：<code>location</code>,默认值：on</p>
+<p>这个参数指定了是否记录客户端的请求出现404错误的日志，通常用于不存在的robots.txt和favicon.ico文件。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location &#x3D; &#x2F;robots.txt &#123;</span><br><span class="line">  log_not_found  off;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>include</code>： include file | *</li>
+</ul>
+<p>你可以包含一些其他的配置文件来完成你想要的功能。例如：<code>include vhosts/*.conf</code></p>
+<ul>
+<li><code>lock_file</code>：lock_file  /var/log/lock_file</li>
+</ul>
+<p>nginx使用链接互斥锁进行顺序的accept()系统调用，如果Nginx在i386,amd64,sparc64,与ppc64环境下使用gcc,Intel C++,或SunPro C++进行编译，Nginx将采用异步互斥进行访问控制，在其他情况下锁文件会被使用。</p>
+<ul>
+<li><code>master_process</code>：master_process on | off</li>
+</ul>
+<p>生产环境中不要使用”daemon”和”master_process”指令，这些选项仅用于开发调试。默认值：on。</p>
+<ul>
+<li><code>pid</code>：pid file</li>
+</ul>
+<p>指定pid文件，可以使用kill命令来发送相关信号，例如你如果想重新读取配置文件，则可以使用：<code>kill -HUP cat /var/log/nginx.pid</code></p>
+<ul>
+<li><code>ssl_engine</code>：ssl_engine engine</li>
+</ul>
+<p>这里可以指定你想使用的OpenSSL引擎，你可以使用这个命令找出哪个是可用的：<code>openssl engine -t</code>。</p>
+<ul>
+<li><code>timer_resolution</code>：timer_resolution t</li>
+</ul>
+<p>这个参数允许缩短gettimeofday()系统调用的时间，默认情况下gettimeofday()在下列都调用完成后才会被调用：kevent(), epoll, /dev/poll, select(), poll()。<br>如果你需要一个比较准确的时间来记录$upstream_response_time或者$msec变量，你可能会用到timer_resolution。<code>timer_resolution  100ms;</code></p>
+<ul>
+<li><code>try_files</code>：try_files path1 [ path2] uri</li>
+</ul>
+<p>按照顺序检查存在的文件，并且返回找到的第一个文件，斜线指目录：<code>$uri /</code>。如果在没有找到文件的情况下，会启用一个参数为last的内部重定向，这个last参数“必须”被设置用来返回URL，否则会产生一个内部错误。</p>
+<ul>
+<li><code>user</code>：user user [group]</li>
+</ul>
+<p>如果主进程以root运行，Nginx将会调用setuid()/setgid()来设置用户/组，如果没有指定组，那么将使用与用户名相同的组，默认情况下会使用nobody用户与nobody组。默认值：nobody nobody。</p>
+<ul>
+<li><code>worker_cpu_affinity</code>：worker_cpu_affinity cpumask [cpumask…]</li>
+</ul>
+<p>仅支持linux系统。这个参数允许将工作进程指定到cpu，他调用sched_setaffinity()函数。如下例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">worker_processes     2;</span><br><span class="line">worker_cpu_affinity 0101 1010;</span><br><span class="line"></span><br><span class="line">指定第一个进程到CPU0&#x2F;CPU2，指定第二个进程到CPU1&#x2F;CPU3，对于HTT处理器来说是一个不错的选择。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>worker_priority</code>：worker_priority [-] number</li>
+</ul>
+<p>这个选项可以用来设置所有工作进程的优先级。</p>
+<ul>
+<li><code>worker_processes</code>：worker_processes number</li>
+</ul>
+<p>由于以下几点原因，Nginx可能需要运行不止一个进程:</p>
+<pre><code>* 使用了SMP（对称多处理技术）。
+* 当服务器在磁盘I/O出现瓶颈时为了减少响应时间。
+* 当使用select()/poll()限制了每个进程的最大连接数时。
 </code></pre>
-<h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><pre><code>- 基本类型：`int,float,bool,string`
-- 结构化类型：`struct,array,slice,map,channel`
-- 描述类型：`interface`
-</code></pre>
-<p><code>    相关知识，部分章节会详细讲解</code></p>
+<p>在事件模块这一章中我们将使用worker_processes和worker_connextions来计算理论最大连接数(max_clents)：<br><code>max_clients = worker_processes * worker_connections</code>。</p>
+<ul>
+<li><code>worker_rlimit_core</code>：worker_rlimit_core size</li>
+</ul>
+<p>允许的每个进程核心文件最大值。</p>
+<ul>
+<li><code>worker_rlimit_nofile</code>：worker_rlimit_nofile limit</li>
+</ul>
+<p>进程能够打开的最多文件描述符数</p>
+<ul>
+<li><code>worker_rlimit_sigpending</code>：worker_rlimit_sigpending limit</li>
+</ul>
+<p>linux内核2.6.8以后，限制调用的进程中真实用户队列可能使用的信号数量。</p>
+<ul>
+<li><code>working_directory</code>：working_directory path</li>
+</ul>
+<p>程序的工作目录，一般只用来指定核心文件位置，Nginx仅使用绝对路径，所有在配置文件中的相对路径会转移到 –prefix==PATH</p>
+<h3 id="事件模块"><a href="#事件模块" class="headerlink" title="事件模块"></a>事件模块</h3><p>控制Nginx处理连接的方式</p>
+<h4 id="指令-1"><a href="#指令-1" class="headerlink" title="指令"></a>指令</h4><ul>
+<li><code>accept_mutex</code>：accept_mutex [ on | off ]</li>
+</ul>
+<p>Nginx使用连接互斥锁进行顺序的accept()系统调用。</p>
+<ul>
+<li><code>accept_mutex_delay</code>：accept_mutex_delay Nms;</li>
+</ul>
+<p>如果一个进程没有互斥锁，它将至少在这个值的时间后被回收，默认是500ms。</p>
+<ul>
+<li><code>debug_connextion</code>：debug_connection [ip | CIDR]</li>
+</ul>
+<p>这个参数可以指定只记录由每个客户端IP产生的debug信息。<br>当然你也可以指定多个参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">error_log &#x2F;var&#x2F;log&#x2F;nginx&#x2F;errors;</span><br><span class="line">events &#123;</span><br><span class="line">  debug_connection   192.168.1.1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>devpoll_changes</code></li>
+</ul>
+<p>这些参数指定了按照规定方式传递到或者来自内核的事件数，默认devpoll的值为32，其余为512。</p>
+<ul>
+<li><code>multi_accept</code>：multi_accept [ on | off ]</li>
+</ul>
+<p>milti_accept在Nginx接到一个新连接通知后调用accept()来接受尽量多的连接。</p>
+<ul>
+<li><code>rtsig_signo</code></li>
+</ul>
+<p>Nginx在rtsig模式启用后使用两个信号，该指令指定第一个信号编号，第二个信号编号为第一个加1。默认值SIGRTMIN+10 (40)</p>
+<ul>
+<li><code>worker_connections</code></li>
+</ul>
+<p>worker_connections和worker_proceses（见主模块）允许你计算理论最大连接数：</p>
+<p>最大连接数 = worker_processes * worker_connections</p>
+<p>在反向代理环境下：<br>最大连接数 = worker_processes * worker_connections/4<br>由于浏览器默认打开2个连接到服务器，nginx使用来自相同地址池的fds（文件描述符）与前后端相连接</p>
 
       
     </div>
@@ -395,7 +493,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://logan-liang.github.io/study/2021/03/06/one-basic-02/" title="基本结构和要素" target="_blank" rel="external">https://logan-liang.github.io/study/2021/03/06/one-basic-02/</a>
+      <a href="https://logan-liang.github.io/study/2021/05/06/nginx-02/" title="Nginx核心模块" target="_blank" rel="external">https://logan-liang.github.io/study/2021/05/06/nginx-02/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -444,12 +542,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/study/2021/03/07/one-basic-03/" title="常量"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+      <a href="/study/2021/05/06/nginx-03/" title="Nginx标准HTTP模块"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/study/2021/03/06/one-basic-01/" title="文件名、关键字与标识符"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/study/2021/05/06/nginx-01/" title="Nginx基础"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
@@ -530,9 +628,9 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
     <script defer>
     var disqus_config = function () {
         
-            this.page.url = 'https://logan-liang.github.io/study/2021/03/06/one-basic-02/';
+            this.page.url = 'https://logan-liang.github.io/study/2021/05/06/nginx-02/';
         
-        this.page.identifier = 'one-basic-02';
+        this.page.identifier = 'nginx-02';
     };
     (function() { 
         var d = document, s = d.createElement('script');  
