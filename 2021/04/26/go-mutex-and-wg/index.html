@@ -17,16 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>Category: 函数 | Logan的博客</title>
-  <meta property="og:type" content="website">
-<meta property="og:title" content="博客">
-<meta property="og:url" content="https://logan-liang.github.io/study/categories/%E5%87%BD%E6%95%B0/index.html">
+  <title>同步锁、读写锁、WaitGroup | Logan的博客</title>
+  <meta name="description" content="概述Go 语言中的sync包提供了两种锁类型：sync.Mutex和sync.RMWutex，前者是互斥锁，后者是读写锁。 同时，又提供了一种对主线程等待goroutine执行完毕的方法，sync.WaitGroup。 互斥锁互斥锁是传统的并发程序对共享资源进行访问控制的主要手段，在Go中，似乎更推崇由channel来实现资源共享和通信。它由标准库代码包sync中的Mutex结构体类型代表。只有两">
+<meta property="og:type" content="article">
+<meta property="og:title" content="同步锁、读写锁、WaitGroup">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/04/26/go-mutex-and-wg/index.html">
 <meta property="og:site_name" content="博客">
+<meta property="og:description" content="概述Go 语言中的sync包提供了两种锁类型：sync.Mutex和sync.RMWutex，前者是互斥锁，后者是读写锁。 同时，又提供了一种对主线程等待goroutine执行完毕的方法，sync.WaitGroup。 互斥锁互斥锁是传统的并发程序对共享资源进行访问控制的主要手段，在Go中，似乎更推崇由channel来实现资源共享和通信。它由标准库代码包sync中的Mutex结构体类型代表。只有两">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-26T06:55:30.000Z">
+<meta property="article:modified_time" content="2021-04-26T06:55:30.767Z">
 <meta property="article:author" content="Logan">
+<meta property="article:tag" content="Golang">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://logan-liang.github.io/study/categories/%E5%87%BD%E6%95%B0/index.html">
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/04/26/go-mutex-and-wg/index.html">
   
     <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
   
@@ -312,75 +317,156 @@
 </aside>
 
   
-  <main class="main" role="main">
-  <article class="content article article-categories article-type-list" itemscope="">
-    <header class="article-header">
-      <h1 itemprop="name" class="hidden-xs">Category: 函数</h1>
-      <p class="hidden-xs">Total 2 articles</p>
-      <nav role="navigation" id="nav-main" class="okayNav">
-        <ul>
-          <li><a href="/study/categories">All</a></li>
-          
-          <li><a href="/study/categories/性能调优/">性能调优</a></li>
-          
-          <li><a href="/study/categories/基本结构和基本数据类型/">基本结构和基本数据类型</a></li>
-          
-          <li><a href="/study/categories/数组与切片/">数组与切片</a></li>
-          
-          <li><a href="/study/categories/函数/">函数</a></li>
-          
-          <li><a href="/study/categories/控制结构/">控制结构</a></li>
-          
-          <li><a href="/study/categories/内部包/">内部包</a></li>
-          
-          <li><a href="/study/categories/GraphQL-入门/">GraphQL 入门</a></li>
-          
-          <li><a href="/study/categories/锁的应用/">锁的应用</a></li>
-          
-          <li><a href="/study/categories/信道/">信道</a></li>
-          
-        </ul>
-      </nav>
-    </header>
-    <!-- /header -->
-    <div class="article-body">
-      <div class="panel panel-default b-no">
-    <div class="panel-heading" role="tab">
-        <h4 class="panel-title">
-            <a data-toggle="collapse" href="#collapse函数" aria-expanded="true">
-              <i class="icon icon-folder text-active"></i><i class="icon icon-folder-open text"></i>
-              函数
-            </a>
-            <small class="text-muted">(Total 2 articles)</small>
-        </h4>
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-go-mutex-and-wg" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      同步锁、读写锁、WaitGroup
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/04/26/go-mutex-and-wg/" class="article-date">
+	  <time datetime="2021-04-26T06:55:30.000Z" itemprop="datePublished">2021-04-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/">锁的应用</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/Golang/" rel="tag">Golang</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/04/26/go-mutex-and-wg/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
     </div>
-    <div id="collapse函数" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading函数">
-        <div class="panel-body">
-            <div class="collection">
-              
-                
-<a href="/study/2021/03/24/three-func-02/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-03-24T06:32:15.000Z" itemprop="datePublished">2021-03-24</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 闭包
-</a>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Go 语言中的sync包提供了两种锁类型：sync.Mutex和sync.RMWutex，前者是互斥锁，后者是读写锁。</p>
+<p>同时，又提供了一种对主线程等待goroutine执行完毕的方法，sync.WaitGroup。</p>
+<h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>互斥锁是传统的并发程序对共享资源进行访问控制的主要手段，在Go中，似乎更推崇由channel来实现资源共享和通信。它由标准库代码包sync中的Mutex结构体类型代表。只有两个公开的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Lock() &#x2F;&#x2F;获得锁</span><br><span class="line">UnLock() &#x2F;&#x2F;释放锁</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li><p><code>Lock()</code>：使用加锁后，不能再继续对其加锁（同一个goroutine中，即：同步调用），否则会panic。只有在unlock 之后才能再次lock。异步调用Lock()，是正当的锁竞争，当然不会有panic了。适用于读写不确定场景，即读写次数没有明显的却别，并且只允许只有一个读或者写的场景，所以该锁也叫做全局锁。</p>
+</li>
+<li><p><code>UnLock()</code>：用于解锁，如果在使用Unlock前未加锁，就会引起一个运行错误。已经锁定的Mutex并不与特定的goroutine相关联，这样可以利用一个goroutine对其加锁，再利用其他goroutine对其解锁。</p>
+</li>
+</ul>
+<p>建议：同一个互斥锁的成对锁定和解锁操作放在同一层次的代码块中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var lck sync.Mutex</span><br><span class="line">func foo() &#123;</span><br><span class="line">    lck.Lock() </span><br><span class="line">    defer lck.Unlock()</span><br><span class="line">    &#x2F;&#x2F; ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-              
-                
-<a href="/study/2021/03/24/three-func-01/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2021-03-24T05:56:16.000Z" itemprop="datePublished">2021-03-24</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 函数参数与返回值
-</a>
-
-
-              
-            </div>
-        </div>
+<p>lck.Lock() 会阻塞知道获取锁，然后利用defer语句在函数返回时自动释放锁。</p>
+<h3 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h3><p>读写锁是分别针对读操作和写操作进行锁定和解锁操作的互斥锁。在Go语言中，读写锁由结构体类型sync.RWMutex代表。</p>
+<p>基本遵循原则：</p>
+<ul>
+<li>写锁定情况下，对读写锁进行读锁定或者写锁定，都将阻塞；而且读锁与写锁之间是互斥的。</li>
+<li>读锁定情况下，对读写锁进行锁定，将阻塞；加读锁时不会阻塞；</li>
+<li>对未被写锁定的读写锁进行写解锁，会引发Panic；</li>
+<li>对未被读锁定的读写锁进行读解锁的时候也会引发Panic；</li>
+<li>写解锁在进行的同时会试图唤醒所有因进行读锁定而被阻塞的goroutine；</li>
+<li>读解锁在进行的时候会试图唤醒一个因进行写锁定而被阻塞的goroutine；</li>
+<li>与互斥锁类似，sync.RWMutex类型的零值就已经是立即可用的读写锁了。在此类型的方法集合中包含了两队方法。即：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func (*RWMutex) Lock &#x2F;&#x2F; 写锁定</span><br><span class="line">func (*RWMutex) Unlock &#x2F;&#x2F; 写解锁</span><br><span class="line">func (*RWMutex) RLock &#x2F;&#x2F; 读锁定</span><br><span class="line">func (*RWMutex) RUnlock &#x2F;&#x2F; 读解锁</span><br></pre></td></tr></table></figure>
+      
     </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/04/26/go-mutex-and-wg/" title="同步锁、读写锁、WaitGroup" target="_blank" rel="external">https://logan-liang.github.io/study/2021/04/26/go-mutex-and-wg/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
 </div>
+
+
     </div>
   </article>
-   
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2021/05/06/go-channel/" title="Channel"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2021/04/23/graphQL-03/" title="GraphQL 验证、执行、内省"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -432,6 +518,29 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/04/26/go-mutex-and-wg/';
+        
+        this.page.identifier = 'go-mutex-and-wg';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
 
 
 
