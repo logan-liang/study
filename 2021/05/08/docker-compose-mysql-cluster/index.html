@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker compose部署MySQL主从复制 | Logan的博客</title>
+  <meta name="description" content="介绍本章节主要介绍利用docker compose 制作MySQL的GTID模式的主从复制。 目录结构请按照以下目录结构创建项目 12345678910111213project│   .env│   mysql-router.env    │   mysql-server.env|   mysql-shell.env|   docker-compose.yaml└───data|   |   m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker compose部署MySQL主从复制">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/05/08/docker-compose-mysql-cluster/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="介绍本章节主要介绍利用docker compose 制作MySQL的GTID模式的主从复制。 目录结构请按照以下目录结构创建项目 12345678910111213project│   .env│   mysql-router.env    │   mysql-server.env|   mysql-shell.env|   docker-compose.yaml└───data|   |   m">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-05-08T07:11:41.000Z">
+<meta property="article:modified_time" content="2021-05-08T07:11:41.979Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="MySQL集群（GTID模式）">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/05/08/docker-compose-mysql-cluster/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL-%E5%85%A5%E9%97%A8/">GraphQL 入门</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/Nginx/">Nginx</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E4%BF%A1%E9%81%93/">信道</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%86%85%E9%83%A8%E5%8C%85/">内部包</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%87%BD%E6%95%B0/">函数</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">基本结构和基本数据类型</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">性能调优</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/">控制结构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/">数组与切片</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/">锁的应用</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL/" rel="tag">GraphQL</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%9B%86%E7%BE%A4%EF%BC%88GTID%E6%A8%A1%E5%BC%8F%EF%BC%89/" rel="tag">MySQL集群（GTID模式）</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/Golang/" style="font-size: 14px;">Golang</a> <a href="/study/tags/GraphQL/" style="font-size: 13.5px;">GraphQL</a> <a href="/study/tags/MySQL%E9%9B%86%E7%BE%A4%EF%BC%88GTID%E6%A8%A1%E5%BC%8F%EF%BC%89/" style="font-size: 13px;">MySQL集群（GTID模式）</a> <a href="/study/tags/Nginx/" style="font-size: 13.5px;">Nginx</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/08/docker-compose-mysql-cluster/" class="title">docker compose部署MySQL主从复制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-08T07:11:41.000Z" itemprop="datePublished">2021-05-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Nginx/">Nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/08/nginx-03/" class="title">Nginx标准HTTP模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-08T05:57:14.000Z" itemprop="datePublished">2021-05-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Nginx/">Nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/nginx-02/" class="title">Nginx核心模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T05:55:18.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Nginx/">Nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/nginx-01/" class="title">Nginx基础</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T02:26:37.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/%E4%BF%A1%E9%81%93/">信道</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/06/go-channel/" class="title">Channel</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-06T01:14:49.000Z" itemprop="datePublished">2021-05-06</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker-compose-mysql-cluster" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker compose部署MySQL主从复制
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/05/08/docker-compose-mysql-cluster/" class="article-date">
+	  <time datetime="2021-05-08T07:11:41.000Z" itemprop="datePublished">2021-05-08</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/MySQL/">MySQL</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/MySQL%E9%9B%86%E7%BE%A4%EF%BC%88GTID%E6%A8%A1%E5%BC%8F%EF%BC%89/" rel="tag">MySQL集群（GTID模式）</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/05/08/docker-compose-mysql-cluster/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>本章节主要介绍利用docker compose 制作MySQL的GTID模式的主从复制。</p>
+<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p>请按照以下目录结构创建项目</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">project</span><br><span class="line">│   .env</span><br><span class="line">│   mysql-router.env    </span><br><span class="line">│   mysql-server.env</span><br><span class="line">|   mysql-shell.env</span><br><span class="line">|   docker-compose.yaml</span><br><span class="line">└───data</span><br><span class="line">|   |   mysql-01</span><br><span class="line">|   |   mysql-02</span><br><span class="line">|   |   mysql-03</span><br><span class="line">└───scripts</span><br><span class="line">    |   db.sql</span><br><span class="line">    |   setup.js</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><h3 id="docker-compose-yaml"><a href="#docker-compose-yaml" class="headerlink" title="docker-compose.yaml"></a>docker-compose.yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">version: &#39;3&#39;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">    mysql-master:</span><br><span class="line">        container_name: $&#123;MYSQL_MASTER_NAME&#125;</span><br><span class="line">        image: mysql&#x2F;mysql-server:$&#123;MYSQL_VERSION&#125;</span><br><span class="line">        expose:</span><br><span class="line">            - $&#123;MASTER_PORT&#125;</span><br><span class="line">        ports:</span><br><span class="line">            - &quot;$&#123;MASTER_PORT&#125;:3306&quot;</span><br><span class="line">        env_file:</span><br><span class="line">            - mysql-server.env</span><br><span class="line">        volumes:</span><br><span class="line">            - $&#123;MASTER_DATA_PATH&#125;:&#x2F;var&#x2F;lib&#x2F;mysql</span><br><span class="line">        command: [&quot;mysqld&quot;,&quot;--server_id&#x3D;1&quot;,&quot;--innodb_ft_min_token_size&#x3D;1&quot;,&quot;--ft_min_word_len&#x3D;1&quot;,&quot;--ngram_token_size&#x3D;1&quot;,&quot;--binlog_checksum&#x3D;NONE&quot;,&quot;--gtid_mode&#x3D;ON&quot;,&quot;--enforce_gtid_consistency&#x3D;ON&quot;,&quot;--log_bin&quot;,&quot;--log_slave_updates&#x3D;ON&quot;,&quot;--master_info_repository&#x3D;TABLE&quot;,&quot;--relay_log_info_repository&#x3D;TABLE&quot;,&quot;--transaction_write_set_extraction&#x3D;XXHASH64&quot;,&quot;--user&#x3D;mysql&quot;,&quot;--skip-host-cache&quot;,&quot;--skip-name-resolve&quot;, &quot;--default_authentication_plugin&#x3D;mysql_native_password&quot;]</span><br><span class="line">        networks:</span><br><span class="line">            - general</span><br><span class="line">    mysql-slave-01:</span><br><span class="line">        container_name: $&#123;MYSQL_SLAVE01_NAME&#125;</span><br><span class="line">        image: &quot;mysql&#x2F;mysql-server:$&#123;MYSQL_VERSION&#125;&quot;</span><br><span class="line">        command: [&quot;mysqld&quot;,&quot;--server_id&#x3D;2&quot;,&quot;--innodb_ft_min_token_size&#x3D;1&quot;,&quot;--ft_min_word_len&#x3D;1&quot;,&quot;--ngram_token_size&#x3D;1&quot;,&quot;--binlog_checksum&#x3D;NONE&quot;,&quot;--gtid_mode&#x3D;ON&quot;,&quot;--enforce_gtid_consistency&#x3D;ON&quot;,&quot;--log_bin&quot;,&quot;--log_slave_updates&#x3D;ON&quot;,&quot;--master_info_repository&#x3D;TABLE&quot;,&quot;--relay_log_info_repository&#x3D;TABLE&quot;,&quot;--transaction_write_set_extraction&#x3D;XXHASH64&quot;,&quot;--user&#x3D;mysql&quot;,&quot;--skip-host-cache&quot;,&quot;--skip-name-resolve&quot;, &quot;--default_authentication_plugin&#x3D;mysql_native_password&quot;]</span><br><span class="line">        expose:</span><br><span class="line">            - $&#123;SLAVE01_PORT&#125;</span><br><span class="line">        ports:</span><br><span class="line">            - &quot;$&#123;SLAVE01_PORT&#125;:3306&quot;</span><br><span class="line">        env_file:</span><br><span class="line">            - mysql-server.env</span><br><span class="line">        volumes:</span><br><span class="line">            - $&#123;SLAVE01_DATA_PATH&#125;:&#x2F;var&#x2F;lib&#x2F;mysql</span><br><span class="line">        depends_on:</span><br><span class="line">            - mysql-master</span><br><span class="line">        networks:</span><br><span class="line">            - general</span><br><span class="line">    mysql-slave-02:</span><br><span class="line">        container_name: $&#123;MYSQL_SLAVE02_NAME&#125;</span><br><span class="line">        image: &quot;mysql&#x2F;mysql-server:$&#123;MYSQL_VERSION&#125;&quot;</span><br><span class="line">        command: [&quot;mysqld&quot;,&quot;--server_id&#x3D;3&quot;,&quot;--innodb_ft_min_token_size&#x3D;1&quot;,&quot;--ft_min_word_len&#x3D;1&quot;,&quot;--ngram_token_size&#x3D;1&quot;,&quot;--binlog_checksum&#x3D;NONE&quot;,&quot;--gtid_mode&#x3D;ON&quot;,&quot;--enforce_gtid_consistency&#x3D;ON&quot;,&quot;--log_bin&quot;,&quot;--log_slave_updates&#x3D;ON&quot;,&quot;--master_info_repository&#x3D;TABLE&quot;,&quot;--relay_log_info_repository&#x3D;TABLE&quot;,&quot;--transaction_write_set_extraction&#x3D;XXHASH64&quot;,&quot;--user&#x3D;mysql&quot;,&quot;--skip-host-cache&quot;,&quot;--skip-name-resolve&quot;, &quot;--default_authentication_plugin&#x3D;mysql_native_password&quot;]</span><br><span class="line">        expose:</span><br><span class="line">            - $&#123;SLAVE02_PORT&#125;</span><br><span class="line">        ports:</span><br><span class="line">            - &quot;$&#123;SLAVE02_PORT&#125;:3306&quot;</span><br><span class="line">        env_file:</span><br><span class="line">            - mysql-server.env</span><br><span class="line">        volumes:</span><br><span class="line">            - $&#123;SLAVE02_DATA_PATH&#125;:&#x2F;var&#x2F;lib&#x2F;mysql</span><br><span class="line">        depends_on:</span><br><span class="line">            - mysql-master</span><br><span class="line">        networks:</span><br><span class="line">            - general</span><br><span class="line">    mysql-shell:</span><br><span class="line">        env_file:</span><br><span class="line">            - mysql-shell.env</span><br><span class="line">        image: neumayer&#x2F;mysql-shell-batch</span><br><span class="line">        container_name: mysql-shell  </span><br><span class="line">        volumes:</span><br><span class="line">            - .&#x2F;scripts&#x2F;:&#x2F;scripts&#x2F;      </span><br><span class="line">        depends_on:</span><br><span class="line">            - mysql-master</span><br><span class="line">            - mysql-slave-01</span><br><span class="line">            - mysql-slave-02</span><br><span class="line">        networks:</span><br><span class="line">            - general</span><br><span class="line">    mysql-router:</span><br><span class="line">        env_file:</span><br><span class="line">            - mysql-router.env</span><br><span class="line">        image: mysql&#x2F;mysql-router:8.0</span><br><span class="line">        container_name: mysql-router</span><br><span class="line">        restart: on-failure</span><br><span class="line">        ports:</span><br><span class="line">            - &quot;$&#123;WRITE_ROUTE_PORT&#125;:6446&quot;</span><br><span class="line">            - &quot;$&#123;READ_ROUTE_PORT&#125;:6447&quot;</span><br><span class="line">        depends_on:</span><br><span class="line">            - mysql-master</span><br><span class="line">            - mysql-slave-01</span><br><span class="line">            - mysql-slave-02</span><br><span class="line">            - mysql-shell</span><br><span class="line">        networks:</span><br><span class="line">            - general</span><br><span class="line">networks:</span><br><span class="line">    general:</span><br><span class="line">        external: true</span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql-router-env"><a href="#mysql-router-env" class="headerlink" title="mysql-router.env"></a>mysql-router.env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MYSQL_USER&#x3D;root</span><br><span class="line">MYSQL_HOST&#x3D;mysql-master</span><br><span class="line">MYSQL_PORT&#x3D;3306</span><br><span class="line">MYSQL_PASSWORD&#x3D;root</span><br><span class="line">MYSQL_INNODB_NUM_MEMBERS&#x3D;3</span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql-server-env"><a href="#mysql-server-env" class="headerlink" title="mysql-server.env"></a>mysql-server.env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MYSQL_ROOT_PASSWORD&#x3D;root</span><br><span class="line">MYSQL_ROOT_HOST&#x3D;%</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql-shell-env"><a href="#mysql-shell-env" class="headerlink" title="mysql-shell.env"></a>mysql-shell.env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MYSQL_USER&#x3D;root</span><br><span class="line">MYSQL_HOST&#x3D;mysql-master</span><br><span class="line">MYSQL_PORT&#x3D;3306</span><br><span class="line">MYSQL_PASSWORD&#x3D;root</span><br><span class="line">MYSQLSH_SCRIPT&#x3D;&#x2F;scripts&#x2F;setupCluster.js</span><br><span class="line">MYSQL_SCRIPT&#x3D;&#x2F;scripts&#x2F;db.sql</span><br></pre></td></tr></table></figure>
+
+<h3 id="env"><a href="#env" class="headerlink" title=".env"></a>.env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">MYSQL_VERSION&#x3D;8.0.12</span><br><span class="line"></span><br><span class="line">#master配置</span><br><span class="line">MYSQL_MASTER_NAME&#x3D;mysql-master</span><br><span class="line">MASTER_PORT&#x3D;3301</span><br><span class="line">MASTER_DATA_PATH&#x3D;.&#x2F;data&#x2F;mysql-1</span><br><span class="line"></span><br><span class="line">#slave01配置</span><br><span class="line">MYSQL_SLAVE01_NAME&#x3D;mysql-slave-01</span><br><span class="line">SLAVE01_PORT&#x3D;3302</span><br><span class="line">SLAVE01_DATA_PATH&#x3D;.&#x2F;data&#x2F;mysql-2</span><br><span class="line"></span><br><span class="line">#slave02配置</span><br><span class="line">MYSQL_SLAVE02_NAME&#x3D;mysql-slave-02</span><br><span class="line">SLAVE02_PORT&#x3D;3303</span><br><span class="line">SLAVE02_DATA_PATH&#x3D;.&#x2F;data&#x2F;mysql-3</span><br><span class="line"></span><br><span class="line">#mysql-route</span><br><span class="line">WRITE_ROUTE_PORT&#x3D;6446</span><br><span class="line">READ_ROUTE_PORT&#x3D;6447</span><br></pre></td></tr></table></figure>
+
+<h3 id="db-sql"><a href="#db-sql" class="headerlink" title="db.sql"></a>db.sql</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE testing;</span><br><span class="line">CREATE USER &#39;test&#39; @&#39;%&#39; IDENTIFIED with mysql_native_password BY &#39;test&#39;;</span><br><span class="line">GRANT ALL PRIVILEGES ON testing.* TO &#39;test&#39; @&#39;%&#39;</span><br></pre></td></tr></table></figure>
+
+<h3 id="setup-js"><a href="#setup-js" class="headerlink" title="setup.js"></a>setup.js</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">var dbPass &#x3D; &quot;root&quot;</span><br><span class="line">var clusterName &#x3D; &quot;devClusterTest&quot;</span><br><span class="line"></span><br><span class="line">try &#123;</span><br><span class="line">    print(&#39;Setting up InnoDB cluster...\n&#39;);</span><br><span class="line">    shell.connect(&#39;root@mysql-master:3306&#39;, dbPass)</span><br><span class="line">    var cluster &#x3D; dba.createCluster(clusterName);</span><br><span class="line">    print(&#39;Adding instances to the cluster.&#39;);</span><br><span class="line">    cluster.addInstance(&#123; user: &quot;root&quot;, host: &quot;mysql-slave-01&quot;, password: dbPass &#125;)</span><br><span class="line">    print(&#39;.&#39;);</span><br><span class="line">    cluster.addInstance(&#123; user: &quot;root&quot;, host: &quot;mysql-slave-02&quot;, password: dbPass &#125;)</span><br><span class="line">    print(&#39;.\nInstances successfully added to the cluster.&#39;);</span><br><span class="line">    print(&#39;\nInnoDB cluster deployed successfully.\n&#39;);</span><br><span class="line">&#125; catch (e) &#123;</span><br><span class="line">    print(&#39;\nThe InnoDB cluster could not be created.\n\nError: &#39; + e.message + &#39;\n&#39;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="部署与检测可用性"><a href="#部署与检测可用性" class="headerlink" title="部署与检测可用性"></a>部署与检测可用性</h2><h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><ul>
+<li>首先创建docker network，执行：<code>docker network create general</code></li>
+<li>启动docker compose的相关service，执行：<code>docker-compose up -d</code></li>
+</ul>
+<h3 id="检测可用性"><a href="#检测可用性" class="headerlink" title="检测可用性"></a>检测可用性</h3><ul>
+<li>查看docker相关容器日志，是否成功，如有报错按照相关error解决。</li>
+<li>检测mysql容器是否满足主从复制条件，进入相关mysql容器后，执行以下命令：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- mysqlsh</span><br><span class="line">- dba.configureInstance(&#39;root@mysql-master:3306&#39;) &#x2F;&#x2F;该命令是在没有集群前用于检测，是否满足条件，如不满足，按照相应提示操作即可开启相应配置。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>检测集群状态：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- mysqlsh</span><br><span class="line">- shell.connect(&#39;root@mysql-master:3306&#39;,&#39;root&#39;)</span><br><span class="line">- var cluster &#x3D; dba.getCluster(&#39;devClusterTest&#39;) &#x2F;&#x2F;集群名称</span><br><span class="line">- cluster.status() &#x2F;&#x2F;查看集群状态</span><br><span class="line">- cluster.removeInstance(&#39;root@mysql-master:3306&#39;)  &#x2F;&#x2F;移除集群</span><br><span class="line">- cluster.rejoinInstance(&#39;root@mysql-master:3306&#39;)  &#x2F;&#x2F;重新连接集群</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/05/08/docker-compose-mysql-cluster/" title="docker compose部署MySQL主从复制" target="_blank" rel="external">https://logan-liang.github.io/study/2021/05/08/docker-compose-mysql-cluster/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/study/2021/05/08/nginx-03/" title="Nginx标准HTTP模块"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/05/08/docker-compose-mysql-cluster/';
+        
+        this.page.identifier = 'docker-compose-mysql-cluster';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
