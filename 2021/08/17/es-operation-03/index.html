@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ElasticSearch数据输入和输出 | Logan的博客</title>
+  <meta name="description" content="什么是文档？在大多数应用中，多数实体或对象可以被序列化为包含键值对的JSON对象。通常情况下，我们使用的术语 对象和文档是可以互相替换的。 文档元数据一个文档不仅仅包含它的数据，也包含元数据 – 有关文档的信息。三个必须的元数据如下：  _index: 文档在哪存放 _type: 文档标识的对象类别 _id: 文档唯一标识  索引文档使用自定义id 生成文档1PUT &#x2F;&amp;#123;ind">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch数据输入和输出">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/08/17/es-operation-03/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="什么是文档？在大多数应用中，多数实体或对象可以被序列化为包含键值对的JSON对象。通常情况下，我们使用的术语 对象和文档是可以互相替换的。 文档元数据一个文档不仅仅包含它的数据，也包含元数据 – 有关文档的信息。三个必须的元数据如下：  _index: 文档在哪存放 _type: 文档标识的对象类别 _id: 文档唯一标识  索引文档使用自定义id 生成文档1PUT &#x2F;&amp;#123;ind">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-08-17T10:11:03.000Z">
+<meta property="article:modified_time" content="2021-08-18T05:24:17.734Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="ElasticSearch">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/08/17/es-operation-03/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL-%E5%85%A5%E9%97%A8/">GraphQL 入门</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/Nginx/">Nginx</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E4%BF%A1%E9%81%93/">信道</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%86%85%E9%83%A8%E5%8C%85/">内部包</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%87%BD%E6%95%B0/">函数</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">基本结构和基本数据类型</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">性能调优</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/">控制结构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/">数组与切片</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/">锁的应用</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL/" rel="tag">GraphQL</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%9B%86%E7%BE%A4%EF%BC%88GTID%E6%A8%A1%E5%BC%8F%EF%BC%89/" rel="tag">MySQL集群（GTID模式）</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/ElasticSearch/" style="font-size: 13.67px;">ElasticSearch</a> <a href="/study/tags/Golang/" style="font-size: 14px;">Golang</a> <a href="/study/tags/GraphQL/" style="font-size: 13.33px;">GraphQL</a> <a href="/study/tags/MySQL%E9%9B%86%E7%BE%A4%EF%BC%88GTID%E6%A8%A1%E5%BC%8F%EF%BC%89/" style="font-size: 13px;">MySQL集群（GTID模式）</a> <a href="/study/tags/Nginx/" style="font-size: 13.33px;">Nginx</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/ElasticSearch/">ElasticSearch</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/08/18/es-operation-04/" class="title">ElasticSearch分布式文档存储</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-18T10:11:03.000Z" itemprop="datePublished">2021-08-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/ElasticSearch/">ElasticSearch</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/08/17/es-operation-03/" class="title">ElasticSearch数据输入和输出</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-17T10:11:03.000Z" itemprop="datePublished">2021-08-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/ElasticSearch/">ElasticSearch</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/08/16/es-operation-02/" class="title">ElasticSearch集群原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-16T10:11:03.000Z" itemprop="datePublished">2021-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/ElasticSearch/">ElasticSearch</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/08/15/es-operation-01/" class="title">ElasticSearch基础入门</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-15T10:11:03.000Z" itemprop="datePublished">2021-08-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2021/05/08/docker-compose-mysql-cluster/" class="title">docker compose部署MySQL主从复制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-08T07:11:41.000Z" itemprop="datePublished">2021-05-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-es-operation-03" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ElasticSearch数据输入和输出
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/08/17/es-operation-03/" class="article-date">
+	  <time datetime="2021-08-17T10:11:03.000Z" itemprop="datePublished">2021-08-17</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/ElasticSearch/">ElasticSearch</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/ElasticSearch/" rel="tag">ElasticSearch</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/08/17/es-operation-03/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="什么是文档？"><a href="#什么是文档？" class="headerlink" title="什么是文档？"></a>什么是文档？</h3><p>在大多数应用中，多数实体或对象可以被序列化为包含键值对的JSON对象。通常情况下，我们使用的术语 对象和文档是可以互相替换的。</p>
+<h3 id="文档元数据"><a href="#文档元数据" class="headerlink" title="文档元数据"></a>文档元数据</h3><p>一个文档不仅仅包含它的数据，也包含元数据 – 有关文档的信息。三个必须的元数据如下：</p>
+<ul>
+<li>_index: 文档在哪存放</li>
+<li>_type: 文档标识的对象类别</li>
+<li>_id: 文档唯一标识</li>
+</ul>
+<h3 id="索引文档"><a href="#索引文档" class="headerlink" title="索引文档"></a>索引文档</h3><h4 id="使用自定义id-生成文档"><a href="#使用自定义id-生成文档" class="headerlink" title="使用自定义id 生成文档"></a>使用自定义id 生成文档</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="自动生成id-生成文档"><a href="#自动生成id-生成文档" class="headerlink" title="自动生成id 生成文档"></a>自动生成id 生成文档</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h3 id="取回一个文档"><a href="#取回一个文档" class="headerlink" title="取回一个文档"></a>取回一个文档</h3><h4 id="根据id取回文档，加上pretty参数，这将会调用ES的pretty-print功能，该功能使得JSON响应体更加可读。"><a href="#根据id取回文档，加上pretty参数，这将会调用ES的pretty-print功能，该功能使得JSON响应体更加可读。" class="headerlink" title="根据id取回文档，加上pretty参数，这将会调用ES的pretty-print功能，该功能使得JSON响应体更加可读。"></a>根据id取回文档，加上pretty参数，这将会调用ES的pretty-print功能，该功能使得JSON响应体更加可读。</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;?pretty  </span><br></pre></td></tr></table></figure>
+
+<h3 id="返回文档的一部分"><a href="#返回文档的一部分" class="headerlink" title="返回文档的一部分"></a>返回文档的一部分</h3><h4 id="根据-source字段来指定想要的返回字段。"><a href="#根据-source字段来指定想要的返回字段。" class="headerlink" title="根据_source字段来指定想要的返回字段。"></a>根据_source字段来指定想要的返回字段。</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;?_source&#x3D;&#123;key&#125;,&#123;key&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="获取不包含任何元数据的结果"><a href="#获取不包含任何元数据的结果" class="headerlink" title="获取不包含任何元数据的结果"></a>获取不包含任何元数据的结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;?_source</span><br></pre></td></tr></table></figure>
+
+<h3 id="检测文档是否存在"><a href="#检测文档是否存在" class="headerlink" title="检测文档是否存在"></a>检测文档是否存在</h3><h4 id="将HTTP的GET方法替换为HEAD方法，类似语法："><a href="#将HTTP的GET方法替换为HEAD方法，类似语法：" class="headerlink" title="将HTTP的GET方法替换为HEAD方法，类似语法："></a>将HTTP的GET方法替换为HEAD方法，类似语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -i -XHEAD http:&#x2F;&#x2F;localhost:9200&#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;</span><br></pre></td></tr></table></figure>
+<p>如果文档存在，则状态为200，相反状态则为404。</p>
+<h3 id="更新整个文档"><a href="#更新整个文档" class="headerlink" title="更新整个文档"></a>更新整个文档</h3><p>在ES中文档是不可改变的，不能修改它们。相反如果想要更新现有的文档，需要重建索引或者进行替换。替换后，_version会发生变化。</p>
+<p>在内部，ES已将旧文档标记为已删除，并增加一个全新的文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;I am starting to get the hang of this...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014&#x2F;01&#x2F;02&quot;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+<h3 id="创建新文档"><a href="#创建新文档" class="headerlink" title="创建新文档"></a>创建新文档</h3><p>保证创建一个完全新的文档，而不是覆盖现有的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;?op_type&#x3D;create</span><br><span class="line">&#123; ... &#125;</span><br><span class="line"></span><br><span class="line">PUT &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;&#x2F;_create</span><br><span class="line">&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除文档"><a href="#删除文档" class="headerlink" title="删除文档"></a>删除文档</h3><p>如果文档存在则found为true，否则为false。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="冲突处理"><a href="#冲突处理" class="headerlink" title="冲突处理"></a>冲突处理</h3><h4 id="乐观并发控制"><a href="#乐观并发控制" class="headerlink" title="乐观并发控制"></a>乐观并发控制</h4><p>所有文档的更新或删除 API，都可以接受 version 参数，这允许你在代码中使用乐观的并发控制，这是一种明智的做法。</p>
+<p>步骤：</p>
+<ul>
+<li>首先，查询出当前的文档id，获取版本号</li>
+<li>其次，修改时传参版本号,如下代码：<code>PUT /website/blog/1?version=1</code></li>
+<li>如果更新时，仍然使用旧版本，则状态码会返回<code>409</code>,则需要获取最新的文档。</li>
+</ul>
+<h3 id="文档部分更新"><a href="#文档部分更新" class="headerlink" title="文档部分更新"></a>文档部分更新</h3><p><code>update</code>原理：它只是yu与现有的文档进行合并，对象被合并到一起，覆盖现有的字段，增加新的字段。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;&#x2F;_update</span><br><span class="line">&#123;</span><br><span class="line">    &quot;doc&quot;:&#123;</span><br><span class="line">        &quot;tags&quot;:[&quot;testing&quot;], &#x2F;&#x2F;数据</span><br><span class="line">        &quot;views&quot;:0 &#x2F;&#x2F;数据</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用脚本更新部分文档"><a href="#使用脚本更新部分文档" class="headerlink" title="使用脚本更新部分文档"></a>使用脚本更新部分文档</h4><p>脚本可以在 update API中用来改变 _source 的字段内容， 它在更新脚本中称为 <code>ctx._source</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;&#x2F;_update</span><br><span class="line">&#123;</span><br><span class="line">   &quot;script&quot; : &quot;ctx._source.&#123;field&#125;+1&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">POST &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;&#x2F;_update</span><br><span class="line">&#123;</span><br><span class="line">   &quot;script&quot; : &quot;ctx._source.tags+&#x3D;new_tag&quot;, &#x2F;&#x2F;new_tag 对应params字段</span><br><span class="line">   &quot;params&quot; : &#123;</span><br><span class="line">      &quot;new_tag&quot; : &quot;search&quot;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="更新冲突重试"><a href="#更新冲突重试" class="headerlink" title="更新冲突重试"></a>更新冲突重试</h4><p>可以通过设置参数 retry_on_conflict 来自动完成重试更新， 这个参数规定了失败之前 update 应该重试的次数，它的默认值为 0 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;&#123;id&#125;&#x2F;_update?retry_on_conflict&#x3D;5 </span><br><span class="line">&#123;</span><br><span class="line">   &quot;script&quot; : &quot;ctx._source.views+&#x3D;1&quot;,</span><br><span class="line">   &quot;upsert&quot;: &#123;</span><br><span class="line">       &quot;views&quot;: 0</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="取回多个文档"><a href="#取回多个文档" class="headerlink" title="取回多个文档"></a>取回多个文档</h3><p>组合参数合并成一个请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;_mget</span><br><span class="line">&#123;</span><br><span class="line">   &quot;docs&quot;:[</span><br><span class="line">      &#123;</span><br><span class="line">         &quot;_index&quot;:&quot;website&quot;,</span><br><span class="line">         &quot;_type&quot;:&quot;blog&quot;,</span><br><span class="line">         &quot;_id&quot;:2</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         &quot;_index&quot;:&quot;website&quot;,</span><br><span class="line">         &quot;_type&quot;:&quot;blog&quot;,</span><br><span class="line">         &quot;_id&quot;:2,</span><br><span class="line">         &quot;_source&quot;:&quot;views&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相同的_index和_type可以组装，返回多个文档数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;_mget</span><br><span class="line">&#123;</span><br><span class="line">   &quot;docs&quot;:[</span><br><span class="line">      &#123;&quot;_id&quot;:2&#125;,</span><br><span class="line">      &#123;&quot;_type&quot;:&quot;pageviews&quot;,&quot;_id&quot;:1&#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">GET &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;_mget</span><br><span class="line">&#123;</span><br><span class="line">   &quot;ids&quot;:[&quot;2&quot;,&quot;1&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代价较小的批量操作"><a href="#代价较小的批量操作" class="headerlink" title="代价较小的批量操作"></a>代价较小的批量操作</h3><p><code>bulk API</code>允许在单个步骤中进行多次<code>create</code>、<code>index</code>、<code>update</code>、<code>delete</code>请求。如果你需要索引一个数据流比如日志事件，它可以排队和索引数百或数千批次。切记，每个请求都是单独处理的，不是原子性的，不存在事务。</p>
+<p><code>create</code>：如果文档不存在，那么就创建它。<br><code>index</code>：创建一个新文档或者替换一个现有的文档。<br><code>update</code>：部分更新一个文档。<br><code>delete</code>：删除一个文档。</p>
+<p>语法格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;_bulk</span><br><span class="line">&#123;&quot;delete&quot;:&#123;&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;,&quot;_id&quot;:&quot;123&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;create&quot;:&#123;&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;,&quot;_id&quot;:&quot;123&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;index&quot;:&#123;&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;update&quot;:&#123;&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;,&quot;_id&quot;:&quot;123&quot;,&quot;_retry_on_conflict&quot;:3&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="不要重复指定Index和Type"><a href="#不要重复指定Index和Type" class="headerlink" title="不要重复指定Index和Type"></a>不要重复指定Index和Type</h4><p>相同的Index和Type，可以指定在url上，不要重复指定。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;&#123;index&#125;&#x2F;&#123;type&#125;&#x2F;_bulk</span><br><span class="line">&#123;&quot;index&quot;:&#123;&quot;_source&quot;:[&quot;a&quot;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="最优的请求"><a href="#最优的请求" class="headerlink" title="最优的请求"></a>最优的请求</h4><p>整个批量请求都需要收到请求的节点加载到内存中，因此请求越大，其它请求所获得的内存就越少。批量请求有一个最佳值，大于这个值，性能甚至会下降。最佳值完全取决于硬件和文档的大小和复杂度、索引、搜索负载的整体情况。</p>
+<p>如何找到最佳点？</p>
+<p>通过批量索引典型文档，并不断增加批量大小进行尝试。当性能开始下降，说明大小太大了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/08/17/es-operation-03/" title="ElasticSearch数据输入和输出" target="_blank" rel="external">https://logan-liang.github.io/study/2021/08/17/es-operation-03/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2021/08/18/es-operation-04/" title="ElasticSearch分布式文档存储"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2021/08/16/es-operation-02/" title="ElasticSearch集群原理"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/08/17/es-operation-03/';
+        
+        this.page.identifier = 'es-operation-03';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
