@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>MySQL-通信过程 | Logan的博客</title>
-  <meta name="description" content="基本介绍MySQL基于tcp的底层协议，需要经历tcp的三次握手。 交互过程握手阶段 服务器-&gt;客户端：握手初始消息 客户端-&gt;服务器：登录认证 服务器-&gt;客户端：认证结果命令执行阶段 客户端-&gt;服务器：执行命令消息 服务器-&gt;客户端：命令执行结果  报文解读登录认证报文握手初始化报文 协议版本号：服务端所使用的mysql协议的版本号 服务器线程ID：服务端为此客户端">
+  <title>Git 常用命令 | Logan的博客</title>
+  <meta name="description" content="git init 初始化本地仓库git remote add origin [Address]  本地仓库与远程仓库关联git remote set-url origin [Address]  本地仓库修改远程仓库关联地址git pull [Address] 获取远程仓库代码git fetch origin  远程仓库代码更新到本地仓库git add &lt;文件&gt;  添加文件到缓存区git">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL-通信过程">
-<meta property="og:url" content="https://logan-liang.github.io/study/2022/07/05/Mysql-07/index.html">
+<meta property="og:title" content="Git 常用命令">
+<meta property="og:url" content="https://logan-liang.github.io/study/2022/07/05/Git-02/index.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="基本介绍MySQL基于tcp的底层协议，需要经历tcp的三次握手。 交互过程握手阶段 服务器-&gt;客户端：握手初始消息 客户端-&gt;服务器：登录认证 服务器-&gt;客户端：认证结果命令执行阶段 客户端-&gt;服务器：执行命令消息 服务器-&gt;客户端：命令执行结果  报文解读登录认证报文握手初始化报文 协议版本号：服务端所使用的mysql协议的版本号 服务器线程ID：服务端为此客户端">
+<meta property="og:description" content="git init 初始化本地仓库git remote add origin [Address]  本地仓库与远程仓库关联git remote set-url origin [Address]  本地仓库修改远程仓库关联地址git pull [Address] 获取远程仓库代码git fetch origin  远程仓库代码更新到本地仓库git add &lt;文件&gt;  添加文件到缓存区git">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-07-05T05:51:03.000Z">
-<meta property="article:modified_time" content="2022-07-05T05:51:03.204Z">
+<meta property="article:published_time" content="2022-07-05T09:26:34.000Z">
+<meta property="article:modified_time" content="2022-07-05T09:26:34.321Z">
 <meta property="article:author" content="Logan">
-<meta property="article:tag" content="MySQL通信过程">
+<meta property="article:tag" content="Command">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://logan-liang.github.io/study/2022/07/05/Mysql-07/index.html">
+  <link rel="canonical" href="https://logan-liang.github.io/study/2022/07/05/Git-02/index.html">
   
     <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
   
@@ -320,14 +320,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-Mysql-07" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-Git-02" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      MySQL-通信过程
+      Git 常用命令
     </h1>
   
 
@@ -335,54 +335,32 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/study/2022/07/05/Mysql-07/" class="article-date">
-	  <time datetime="2022-07-05T05:51:03.000Z" itemprop="datePublished">2022-07-05</time>
+	<a href="/study/2022/07/05/Git-02/" class="article-date">
+	  <time datetime="2022-07-05T09:26:34.000Z" itemprop="datePublished">2022-07-05</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/study/categories/MySQL/">MySQL</a>
+    <a class="article-category-link" href="/study/categories/Git/">Git</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="tag">MySQL通信过程</a>
+	<a class="article-tag-link-link" href="/study/tags/Command/" rel="tag">Command</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2022/07/05/Mysql-07/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2022/07/05/Git-02/#comments" class="article-comment-link">Comments</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h3 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h3><p>MySQL基于tcp的底层协议，需要经历tcp的三次握手。</p>
-<h3 id="交互过程"><a href="#交互过程" class="headerlink" title="交互过程"></a>交互过程</h3><h4 id="握手阶段"><a href="#握手阶段" class="headerlink" title="握手阶段"></a>握手阶段</h4><ul>
-<li>服务器-&gt;客户端：握手初始消息</li>
-<li>客户端-&gt;服务器：登录认证</li>
-<li>服务器-&gt;客户端：认证结果<h4 id="命令执行阶段"><a href="#命令执行阶段" class="headerlink" title="命令执行阶段"></a>命令执行阶段</h4></li>
-<li>客户端-&gt;服务器：执行命令消息</li>
-<li>服务器-&gt;客户端：命令执行结果</li>
-</ul>
-<h3 id="报文解读"><a href="#报文解读" class="headerlink" title="报文解读"></a>报文解读</h3><h4 id="登录认证报文"><a href="#登录认证报文" class="headerlink" title="登录认证报文"></a>登录认证报文</h4><h5 id="握手初始化报文"><a href="#握手初始化报文" class="headerlink" title="握手初始化报文"></a>握手初始化报文</h5><ul>
-<li>协议版本号：服务端所使用的mysql协议的版本号</li>
-<li>服务器线程ID：服务端为此客户端所创建的线程ID</li>
-<li>挑战随机数：MySQL数据库用户认证采用的是挑战/应答的方式，服务器生成该挑战数并发送给客户端，由客户端进行处理并返回相应结果，然后服务器检查是否与预期的结果相同，从而完成用户认证的过程。</li>
-<li>服务器权能标志：用于与客户端协商通讯方式</li>
-</ul>
-<h5 id="登录认证报文-1"><a href="#登录认证报文-1" class="headerlink" title="登录认证报文"></a>登录认证报文</h5><ul>
-<li>客户端全能标志：客户端收到服务器发来的初始化报文后，会对服务器发送的全能标志进行修改，保留自身所支持的功能，然后将全能标志返回给服务器，从而保证服务器与客户端通讯的兼容性。</li>
-<li>消息长度：客户端发送请求时所支持的最大消息长度值</li>
-<li>字符编码：表示通讯过程中使用的字符编码，与服务器在认证报文中发送的相同</li>
-<li>用户名：客户端登录的用户名</li>
-<li>挑战认证数据：客户端用户密码使用服务器发送的挑战随机数进行加密后，生成挑战认证数据，返回给服务器用于服务端的认证。</li>
-</ul>
-<h5 id="服务端认证结果报文"><a href="#服务端认证结果报文" class="headerlink" title="服务端认证结果报文"></a>服务端认证结果报文</h5><p>服务端主要验证用户名、密码是否正确存在，如果正确返回ok，否则返回error报文。</p>
-
+        <h4 id="git-init-初始化本地仓库"><a href="#git-init-初始化本地仓库" class="headerlink" title="git init 初始化本地仓库"></a>git init 初始化本地仓库</h4><h4 id="git-remote-add-origin-Address-本地仓库与远程仓库关联"><a href="#git-remote-add-origin-Address-本地仓库与远程仓库关联" class="headerlink" title="git remote add origin [Address]  本地仓库与远程仓库关联"></a>git remote add origin [Address]  本地仓库与远程仓库关联</h4><h4 id="git-remote-set-url-origin-Address-本地仓库修改远程仓库关联地址"><a href="#git-remote-set-url-origin-Address-本地仓库修改远程仓库关联地址" class="headerlink" title="git remote set-url origin [Address]  本地仓库修改远程仓库关联地址"></a>git remote set-url origin [Address]  本地仓库修改远程仓库关联地址</h4><h4 id="git-pull-Address-获取远程仓库代码"><a href="#git-pull-Address-获取远程仓库代码" class="headerlink" title="git pull [Address] 获取远程仓库代码"></a>git pull [Address] 获取远程仓库代码</h4><h4 id="git-fetch-origin-远程仓库代码更新到本地仓库"><a href="#git-fetch-origin-远程仓库代码更新到本地仓库" class="headerlink" title="git fetch origin  远程仓库代码更新到本地仓库"></a>git fetch origin  远程仓库代码更新到本地仓库</h4><h4 id="git-add-lt-文件-gt-添加文件到缓存区"><a href="#git-add-lt-文件-gt-添加文件到缓存区" class="headerlink" title="git add &lt;文件&gt;  添加文件到缓存区"></a>git add &lt;文件&gt;  添加文件到缓存区</h4><h4 id="git-commit-m-“内容描述”-提交代码-并进行备注"><a href="#git-commit-m-“内容描述”-提交代码-并进行备注" class="headerlink" title="git commit -m “内容描述”  提交代码 并进行备注"></a>git commit -m “内容描述”  提交代码 并进行备注</h4><h4 id="git-push-上传到远程仓库"><a href="#git-push-上传到远程仓库" class="headerlink" title="git push 上传到远程仓库"></a>git push 上传到远程仓库</h4><h4 id="git-branch-查看当前所在分支"><a href="#git-branch-查看当前所在分支" class="headerlink" title="git branch 查看当前所在分支"></a>git branch 查看当前所在分支</h4><h4 id="git-branch-r-查看所有分支"><a href="#git-branch-r-查看所有分支" class="headerlink" title="git branch -r 查看所有分支"></a>git branch -r 查看所有分支</h4><h4 id="git-branch-a-查看远程分支"><a href="#git-branch-a-查看远程分支" class="headerlink" title="git branch -a 查看远程分支"></a>git branch -a 查看远程分支</h4><h4 id="git-branch-d-XXXX-删除-分支"><a href="#git-branch-d-XXXX-删除-分支" class="headerlink" title="git branch -d XXXX  删除 分支"></a>git branch -d XXXX  删除 分支</h4><h4 id="git-tag-a-版本-m-“描述”-打标签"><a href="#git-tag-a-版本-m-“描述”-打标签" class="headerlink" title="git tag -a 版本 -m “描述”   //打标签"></a>git tag -a 版本 -m “描述”   //打标签</h4><h4 id="git-show-版本-查看标签"><a href="#git-show-版本-查看标签" class="headerlink" title="git show 版本  //查看标签"></a>git show 版本  //查看标签</h4><h4 id="git-push-origin-版本-推送"><a href="#git-push-origin-版本-推送" class="headerlink" title="git push origin 版本 //推送"></a>git push origin 版本 //推送</h4><h4 id="git-tag-d-版本-删除标签"><a href="#git-tag-d-版本-删除标签" class="headerlink" title="git tag -d 版本  //删除标签"></a>git tag -d 版本  //删除标签</h4><h4 id="git-stash-将本地修改代码暂存"><a href="#git-stash-将本地修改代码暂存" class="headerlink" title="git stash  //将本地修改代码暂存"></a>git stash  //将本地修改代码暂存</h4><h4 id="git-stash-pop-弹出最近暂存的代码"><a href="#git-stash-pop-弹出最近暂存的代码" class="headerlink" title="git stash pop //弹出最近暂存的代码"></a>git stash pop //弹出最近暂存的代码</h4><h4 id="git-stash-list-查看暂存列表"><a href="#git-stash-list-查看暂存列表" class="headerlink" title="git stash list //查看暂存列表"></a>git stash list //查看暂存列表</h4><h4 id="git-checkout-b-branchName-基于当前分支创建并切换新分支"><a href="#git-checkout-b-branchName-基于当前分支创建并切换新分支" class="headerlink" title="git checkout -b [branchName]  //基于当前分支创建并切换新分支"></a>git checkout -b [branchName]  //基于当前分支创建并切换新分支</h4><h4 id="git-cherry-pick-commitID-将commit修改内容抽取到当前分支下"><a href="#git-cherry-pick-commitID-将commit修改内容抽取到当前分支下" class="headerlink" title="git cherry-pick [commitID] //将commit修改内容抽取到当前分支下"></a>git cherry-pick [commitID] //将commit修改内容抽取到当前分支下</h4>
       
     </div>
     <div class="article-footer">
@@ -391,7 +369,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://logan-liang.github.io/study/2022/07/05/Mysql-07/" title="MySQL-通信过程" target="_blank" rel="external">https://logan-liang.github.io/study/2022/07/05/Mysql-07/</a>
+      <a href="https://logan-liang.github.io/study/2022/07/05/Git-02/" title="Git 常用命令" target="_blank" rel="external">https://logan-liang.github.io/study/2022/07/05/Git-02/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -439,13 +417,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/study/2022/07/05/Mysql-08/" title="MySQL-Query Cache"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/study/2022/07/05/Mysql-06/" title="MySQL-性能指标"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/study/2022/07/05/Git-01/" title="Git Rebase"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
@@ -526,9 +500,9 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
     <script defer>
     var disqus_config = function () {
         
-            this.page.url = 'https://logan-liang.github.io/study/2022/07/05/Mysql-07/';
+            this.page.url = 'https://logan-liang.github.io/study/2022/07/05/Git-02/';
         
-        this.page.identifier = 'Mysql-07';
+        this.page.identifier = 'Git-02';
     };
     (function() { 
         var d = document, s = d.createElement('script');  
