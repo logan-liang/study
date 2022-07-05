@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>变量 | Logan的博客</title>
+  <meta name="description" content="简介声明变量的一般形式是使用var关键字：var identifier type。 需要注意的是，Go和许多编程语言不同，它在声明变量时将变量的类型放在变量的名称之后。Go为什么要选择这么做呢？ 首先，它是为了避免像C语言中那样含糊不清的声明形式，例如：int * a,b。而在Go语言中，则可以很轻松地将它们都声明为指针类型：     var a,b *int其次，这种语法能够按照从左至右的顺序阅">
+<meta property="og:type" content="article">
+<meta property="og:title" content="变量">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/03/07/one-basic-04/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="简介声明变量的一般形式是使用var关键字：var identifier type。 需要注意的是，Go和许多编程语言不同，它在声明变量时将变量的类型放在变量的名称之后。Go为什么要选择这么做呢？ 首先，它是为了避免像C语言中那样含糊不清的声明形式，例如：int * a,b。而在Go语言中，则可以很轻松地将它们都声明为指针类型：     var a,b *int其次，这种语法能够按照从左至右的顺序阅">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-07T11:23:07.000Z">
+<meta property="article:modified_time" content="2022-07-05T01:32:23.170Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="基本结构和基本数据类型">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/03/07/one-basic-04/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/Golang/">Golang</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL/">GraphQL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" rel="tag">GraphQL 入门</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" rel="tag">MySQL事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="tag">MySQL存储引擎</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" rel="tag">MySQL性能指标</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" rel="tag">MySQL插入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" rel="tag">MySQL索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" rel="tag">MySQL缓存</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="tag">MySQL通信过程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%94%81/" rel="tag">MySQL锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E4%BF%A1%E9%81%93/" rel="tag">信道</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" rel="tag">内部包</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%87%BD%E6%95%B0/" rel="tag">函数</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">基本结构和基本数据类型</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="tag">性能调优</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" rel="tag">控制结构</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" rel="tag">数组与切片</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" rel="tag">锁的应用</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" style="font-size: 13.67px;">GraphQL 入门</a> <a href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" style="font-size: 13px;">MySQL事务</a> <a href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" style="font-size: 13px;">MySQL存储引擎</a> <a href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" style="font-size: 13px;">MySQL性能指标</a> <a href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" style="font-size: 13px;">MySQL插入</a> <a href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" style="font-size: 13px;">MySQL索引</a> <a href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" style="font-size: 13px;">MySQL缓存</a> <a href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" style="font-size: 13px;">MySQL通信过程</a> <a href="/study/tags/MySQL%E9%94%81/" style="font-size: 13px;">MySQL锁</a> <a href="/study/tags/%E4%BF%A1%E9%81%93/" style="font-size: 13px;">信道</a> <a href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" style="font-size: 13.33px;">内部包</a> <a href="/study/tags/%E5%87%BD%E6%95%B0/" style="font-size: 13.33px;">函数</a> <a href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" style="font-size: 14px;">基本结构和基本数据类型</a> <a href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 13px;">性能调优</a> <a href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" style="font-size: 13.67px;">控制结构</a> <a href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" style="font-size: 13px;">数组与切片</a> <a href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" style="font-size: 13px;">锁的应用</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2022/07/">July 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-08/" class="title">MySQL-Query Cache</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T07:42:42.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-07/" class="title">MySQL-通信过程</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:51:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-06/" class="title">MySQL-性能指标</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:59.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-05/" class="title">MySQL-插入原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:55.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-01/" class="title">MySQL-索引原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T01:40:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-one-basic-04" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      变量
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/03/07/one-basic-04/" class="article-date">
+	  <time datetime="2021-03-07T11:23:07.000Z" itemprop="datePublished">2021-03-07</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/Golang/">Golang</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">基本结构和基本数据类型</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/03/07/one-basic-04/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>声明变量的一般形式是使用<code>var</code>关键字：<code>var identifier type</code>。</p>
+<p>需要注意的是，Go和许多编程语言不同，它在声明变量时将变量的类型放在变量的名称之后。Go为什么要选择这么做呢？</p>
+<p>首先，它是为了避免像C语言中那样含糊不清的声明形式，例如：<code>int * a,b</code>。而在Go语言中，则可以很轻松地将它们都声明为指针类型：</p>
+<p><code>    var a,b *int</code><br>其次，这种语法能够按照从左至右的顺序阅读，使得代码更加容易理解。</p>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var a int</span><br><span class="line">var b boll</span><br><span class="line">var str string</span><br></pre></td></tr></table></figure>
+
+<p>你也可以改写成这种形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var(</span><br><span class="line">    a int</span><br><span class="line">    b bool</span><br><span class="line">    c string</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这种因式分解关键字的写法一般用于声明全局变量。</p>
+<p>当一个变量被声明之后，系统自动赋予它该类型的零值：int 为 0，float 为 0.0，bool 为 false，string 为空字符串，指针为 nil。记住，所有的内存在 Go 中都是经过初始化的。</p>
+<p>变量的命名规则遵循骆驼命名法，即首个单词小写，每个新单词的首字母大写，例如：<code>numShips</code> 和 <code>startDate</code>。</p>
+<p>但如果你的全局变量希望能够被外部包所使用，则需要将首个单词的首字母也大写。</p>
+<p>一个变量（常量、类型和函数）在程序中都有一定的作用范围，称之为作用域。如果一个变量在函数体外声明，则被认为是全局变量，可以在整个包甚至外部包（被导出后）使用，不管你声明在哪个源文件里或在哪个源文件里调用该变量。</p>
+<p>在函数体内声明的变量称之为局部变量，它们的作用域只在函数体内，参数和返回值变量也是局部变量。</p>
+<h3 id="值类型和引用类型"><a href="#值类型和引用类型" class="headerlink" title="值类型和引用类型"></a>值类型和引用类型</h3><p>程序中所用到的内存在计算机中使用一堆箱子来表示，这些箱子被称为“字”。根据不同的处理器以及操作系统类型，所有的字都具有32位（4字节）和64位（8字节）的相同长度；所有的字都使用相关的内存地址来进行表示。</p>
+<p>所有像int、float、bool和string这些基本类型都属于值类型，使用这些类型的变量直接指向存在内存中的值。</p>
+<p>另外，像数组和结构这些复合类型也是值类型。</p>
+<p>当使用等号<code>=</code>将一个变量的值赋值给另一个变量时，如：<code>j=i</code>，实际上是在内存中将i的值进行了拷贝。</p>
+<p>你可以通过<code>&amp;i</code>来获取i的内存地址，例如：0xf840000040（每次的地址都可能不一样）。值类型的变量的值存储在栈中。</p>
+<p>内存地址会根据机器的不同而有所不同，甚至相同的程序在不同的机器上执行后也会有不同的内存地址。因为每台机器可能有不同的存储器布局，并且位置分配也不同。</p>
+<p>更复杂的数据通常会需要使用多个字，这些数据一般使用引用类型保存。</p>
+<p>一个引用类型的变量r1存储的是r1的值所在的内存地址，或内存地址中第一个字所在的位置。</p>
+<p>这个内存地址被称之为指针，这个指针实际上也被存在另外的某一个字中。</p>
+<p>同一个引用类型的指针指向的多个字可以是在连续的内存地址中，这也是计算效率最高的一种存储形式；也可以将这些字分散存放在内存中，每个字都指示了下一个子所在的内存地址。</p>
+<p>当使用赋值语句<code>r2=r1</code>时，只有引用（地址）被复制。</p>
+<p>如果r1的值被改变了，那么这个值的所有饮用都会指向被修改后的内容，在这个例子中r2也会受到影响。</p>
+<p>在Go语言中，指针属于引用类型，其它的引用类型还包括slices，maps和channel。被引用的变量会存在堆中，以便进行垃圾回收，且比栈拥有更大的内存空间。</p>
+<h3 id="简短形式，使用-赋值操作符"><a href="#简短形式，使用-赋值操作符" class="headerlink" title="简短形式，使用:=赋值操作符"></a>简短形式，使用:=赋值操作符</h3><p>我们知道可以在变量的初始化时省略变量的类型而由系统自动推断。</p>
+<p>这是使用变量的首选形式，但是它只能被用在函数体内，而不可以用于全局变量的声明与赋值。使用操作符<code>:=</code>可以高效地创建一个新的变量，称之为初始化声明。</p>
+<p>多变量可以在同一行进行赋值，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a,b,c:&#x3D;5,7,&quot;abc&quot;</span><br></pre></td></tr></table></figure>
+
+<p>右边的这些值以相同的顺序赋值给左边的变量，所以a的值是<code>5</code>，b的值是<code>7</code>，c的值是<code>&quot;abc&quot;</code>。</p>
+<p>这些成为<code>并行</code>或<code>同时</code>赋值。</p>
+<p>空白标识符<code>_</code>也被用于抛弃值，如值<code>5</code>在：<code>_,b=5,7</code>中被抛弃。</p>
+<h3 id="init-函数"><a href="#init-函数" class="headerlink" title="init 函数"></a>init 函数</h3><p>变量除了可以在全局声明中初始化，也可以在init函数中初始化。这是一类非常特殊的函数，它不能够被人为调用，而是在每个包完成初始化后自动执行，并且执行优先级比main函数高。</p>
+<p>每个源文件都只能包含一个init函数。初始化总是以单线程执行，并且按照包的依赖关系顺序执行。</p>
+<p>一个可能的用途是在开始执行程序之前对数据进行检验或修复，以保证程序状态的正确性。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/03/07/one-basic-04/" title="变量" target="_blank" rel="external">https://logan-liang.github.io/study/2021/03/07/one-basic-04/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2021/03/08/one-basic-05/" title="基本类型和运算符"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2021/03/07/one-basic-03/" title="常量"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/03/07/one-basic-04/';
+        
+        this.page.identifier = 'one-basic-04';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

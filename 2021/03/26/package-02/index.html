@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>反射包 | Logan的博客</title>
+  <meta name="description" content="反射是用程序检查其所有的结构，尤其时类型的一种能力；这是元编程的一种形式。反射可以在运行时检查类型和变量，例如它的大小、方法和动态的调用这些方法。这对于没有源代码的包尤其有用。这是一个强大的工具，除非真的有必要，否则应当避免使用或小心使用。 变量的最基本信息就是类型和值：反射包的Type用来表示一个Go类型，反射包的Value为Go提供了反射接口。 实际上，反射时通过检查一个接口的值，变量首先被转">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反射包">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/03/26/package-02/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="反射是用程序检查其所有的结构，尤其时类型的一种能力；这是元编程的一种形式。反射可以在运行时检查类型和变量，例如它的大小、方法和动态的调用这些方法。这对于没有源代码的包尤其有用。这是一个强大的工具，除非真的有必要，否则应当避免使用或小心使用。 变量的最基本信息就是类型和值：反射包的Type用来表示一个Go类型，反射包的Value为Go提供了反射接口。 实际上，反射时通过检查一个接口的值，变量首先被转">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-26T08:43:00.000Z">
+<meta property="article:modified_time" content="2022-07-05T01:33:46.834Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="内部包">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/03/26/package-02/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/Golang/">Golang</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL/">GraphQL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" rel="tag">GraphQL 入门</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" rel="tag">MySQL事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="tag">MySQL存储引擎</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" rel="tag">MySQL性能指标</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" rel="tag">MySQL插入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" rel="tag">MySQL索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" rel="tag">MySQL缓存</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="tag">MySQL通信过程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%94%81/" rel="tag">MySQL锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E4%BF%A1%E9%81%93/" rel="tag">信道</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" rel="tag">内部包</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%87%BD%E6%95%B0/" rel="tag">函数</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">基本结构和基本数据类型</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="tag">性能调优</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" rel="tag">控制结构</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" rel="tag">数组与切片</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" rel="tag">锁的应用</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" style="font-size: 13.67px;">GraphQL 入门</a> <a href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" style="font-size: 13px;">MySQL事务</a> <a href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" style="font-size: 13px;">MySQL存储引擎</a> <a href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" style="font-size: 13px;">MySQL性能指标</a> <a href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" style="font-size: 13px;">MySQL插入</a> <a href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" style="font-size: 13px;">MySQL索引</a> <a href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" style="font-size: 13px;">MySQL缓存</a> <a href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" style="font-size: 13px;">MySQL通信过程</a> <a href="/study/tags/MySQL%E9%94%81/" style="font-size: 13px;">MySQL锁</a> <a href="/study/tags/%E4%BF%A1%E9%81%93/" style="font-size: 13px;">信道</a> <a href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" style="font-size: 13.33px;">内部包</a> <a href="/study/tags/%E5%87%BD%E6%95%B0/" style="font-size: 13.33px;">函数</a> <a href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" style="font-size: 14px;">基本结构和基本数据类型</a> <a href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 13px;">性能调优</a> <a href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" style="font-size: 13.67px;">控制结构</a> <a href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" style="font-size: 13px;">数组与切片</a> <a href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" style="font-size: 13px;">锁的应用</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2022/07/">July 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-08/" class="title">MySQL-Query Cache</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T07:42:42.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-07/" class="title">MySQL-通信过程</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:51:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-06/" class="title">MySQL-性能指标</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:59.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-05/" class="title">MySQL-插入原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:55.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-01/" class="title">MySQL-索引原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T01:40:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-package-02" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      反射包
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/03/26/package-02/" class="article-date">
+	  <time datetime="2021-03-26T08:43:00.000Z" itemprop="datePublished">2021-03-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/Golang/">Golang</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" rel="tag">内部包</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/03/26/package-02/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>反射是用程序检查其所有的结构，尤其时类型的一种能力；这是元编程的一种形式。反射可以在运行时检查类型和变量，例如它的大小、方法和动态的调用这些方法。这对于没有源代码的包尤其有用。这是一个强大的工具，除非真的有必要，否则应当避免使用或小心使用。</p>
+<p>变量的最基本信息就是类型和值：反射包的<code>Type</code>用来表示一个Go类型，反射包的<code>Value</code>为Go提供了反射接口。</p>
+<p>实际上，反射时通过检查一个接口的值，变量首先被转换成空接口。接口的值包含一个type和value。</p>
+<p>反射可以从接口反射到对象，也可以从对象反射回接口值。</p>
+<h3 id="什么时候该用到反射？"><a href="#什么时候该用到反射？" class="headerlink" title="什么时候该用到反射？"></a>什么时候该用到反射？</h3><ul>
+<li>为了降低多写代码造成的bug率，做更好的归约和抽象。</li>
+<li>为了灵活、好用、方便，做动态解析、调用和处理。</li>
+<li>为了代码好看、易读、提高开发效率，补足与动态语言之间的一些差别。</li>
+</ul>
+<h3 id="Go语言反射三大法则："><a href="#Go语言反射三大法则：" class="headerlink" title="Go语言反射三大法则："></a>Go语言反射三大法则：</h3><ul>
+<li>从<code>interface&#123;&#125;</code>变量可以反射出反射对象；</li>
+<li>从反射对象可以获取<code>interface&#123;&#125;</code>变量；</li>
+<li>要修改反射对象，其值必须可设置；</li>
+</ul>
+<h3 id="Type和Value方法"><a href="#Type和Value方法" class="headerlink" title="Type和Value方法"></a>Type和Value方法</h3><h4 id="Type和Value拥有的同名方法"><a href="#Type和Value拥有的同名方法" class="headerlink" title="Type和Value拥有的同名方法"></a>Type和Value拥有的同名方法</h4><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Type返回类型</th>
+<th>Value返回类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kind</td>
+<td>Kind</td>
+<td>Kind</td>
+<td>返回指定对象的Kind类型</td>
+</tr>
+<tr>
+<td>NumMethod</td>
+<td>int</td>
+<td>int</td>
+<td>返回 struct 拥有的方法总数，包括 unexported 方法</td>
+</tr>
+<tr>
+<td>MethodByName</td>
+<td>Method</td>
+<td>Value</td>
+<td>根据方法名找方法</td>
+</tr>
+<tr>
+<td>Method</td>
+<td>Method</td>
+<td>Value</td>
+<td>返回第 i 个方法</td>
+</tr>
+<tr>
+<td>NumField</td>
+<td>int</td>
+<td>int</td>
+<td>返回 struct 所包含的 field 数量</td>
+</tr>
+<tr>
+<td>Field</td>
+<td>StructField</td>
+<td>Value</td>
+<td>取 struct 结构的第 n 个 field</td>
+</tr>
+<tr>
+<td>FieldByIndex</td>
+<td>StructField</td>
+<td>Value</td>
+<td>嵌套的方式取 struct 的 field，比如 v.FieldByIndex ([] int {1,2}) 等价于 v.field (1).field (2)</td>
+</tr>
+<tr>
+<td>FieldByName</td>
+<td>StructField,bool</td>
+<td>Value</td>
+<td>返回名称匹配 match 函数的 field</td>
+</tr>
+<tr>
+<td>FieldByNameFunc</td>
+<td>StructField,bool</td>
+<td>Value</td>
+<td>返回名称匹配 match 函数的 field</td>
+</tr>
+</tbody></table>
+<h4 id="Type独有的方法"><a href="#Type独有的方法" class="headerlink" title="Type独有的方法"></a>Type独有的方法</h4><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Align</td>
+<td>分配内存时的内存对齐字节数</td>
+</tr>
+<tr>
+<td>FieldAlign</td>
+<td>作为 struct 的 field 时内存对齐字节数</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>type 名 string 类型</td>
+</tr>
+<tr>
+<td>PkgPath</td>
+<td>包路径， “encoding/base64”， 内置类型返回 empty string</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>该类型变量占用字节数</td>
+</tr>
+<tr>
+<td>String</td>
+<td>type 的 string 表示方式</td>
+</tr>
+<tr>
+<td>Implements</td>
+<td>判断该类型是否实现了某个接口</td>
+</tr>
+<tr>
+<td>AssignableTo</td>
+<td>判断该类型能否赋值给某个类型</td>
+</tr>
+<tr>
+<td>ConvertibleTo</td>
+<td>判断该类型能否转换为另外一种类型</td>
+</tr>
+<tr>
+<td>Comparable</td>
+<td>判断该类型变量是否可以比较</td>
+</tr>
+<tr>
+<td>ChanDir</td>
+<td>返回 channel 的方向 recv/send/double</td>
+</tr>
+<tr>
+<td>IsVariadic</td>
+<td>判断函数是否接受可变参数</td>
+</tr>
+<tr>
+<td>Elem</td>
+<td>取该类型的元素</td>
+</tr>
+<tr>
+<td>In</td>
+<td>函数第 n 个入参</td>
+</tr>
+<tr>
+<td>Out</td>
+<td>函数第 n 个出参</td>
+</tr>
+<tr>
+<td>NumIn</td>
+<td>函数的入参数个数</td>
+</tr>
+<tr>
+<td>NumOut</td>
+<td>函数的出参个数</td>
+</tr>
+<tr>
+<td>Key</td>
+<td>返回 map 结构的 key 类型 Type</td>
+</tr>
+<tr>
+<td>Len</td>
+<td>返回 array 的长度</td>
+</tr>
+</tbody></table>
+<h4 id="Value独有的方法"><a href="#Value独有的方法" class="headerlink" title="Value独有的方法"></a>Value独有的方法</h4><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Addr</td>
+<td>v 的指针，前提时 CanAddr () 返回 true</td>
+</tr>
+<tr>
+<td>Bool</td>
+<td>取值，布尔类型</td>
+</tr>
+<tr>
+<td>Bytes</td>
+<td>取值，字节流</td>
+</tr>
+<tr>
+<td>Call</td>
+<td>调用函数</td>
+</tr>
+<tr>
+<td>CallSlice</td>
+<td>调用具有可变参的函数</td>
+</tr>
+<tr>
+<td>CanAddr</td>
+<td>判断能否取址</td>
+</tr>
+<tr>
+<td>CanInterface</td>
+<td>判断 Interface 方法能否使用</td>
+</tr>
+<tr>
+<td>CanSet</td>
+<td>判断 v 的值能否改变</td>
+</tr>
+<tr>
+<td>Cap</td>
+<td>判断容量 Array/Chan/Slice</td>
+</tr>
+<tr>
+<td>Close</td>
+<td>关闭 Chan</td>
+</tr>
+<tr>
+<td>Complex</td>
+<td>取值，复数</td>
+</tr>
+<tr>
+<td>Convert</td>
+<td>返回将 v 转换位 type t 的结果</td>
+</tr>
+<tr>
+<td>Elem</td>
+<td>返回 interface 包含或者 Ptr 指针的实际值</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>取值，浮点型</td>
+</tr>
+<tr>
+<td>Index</td>
+<td>索引操作    Array/Slice/String</td>
+</tr>
+<tr>
+<td>Int</td>
+<td>取值，整型</td>
+</tr>
+<tr>
+<td>Interface</td>
+<td>将当前 value 以 interface {} 形式返回</td>
+</tr>
+<tr>
+<td>IsNil</td>
+<td>判断是否为 nil，chan, func, interface, map, pointer, or slice value</td>
+</tr>
+<tr>
+<td>IsValid</td>
+<td>是否是可操作的 Value，返回 false 表示为 zero Value</td>
+</tr>
+<tr>
+<td>Len</td>
+<td>适用于 Array, Chan, Map, Slice, or String</td>
+</tr>
+<tr>
+<td>MapIndex</td>
+<td>对 map 类型按 key 取值</td>
+</tr>
+<tr>
+<td>MapKeys</td>
+<td>map 类型的所有 key 的列表</td>
+</tr>
+<tr>
+<td>OverflowComplex</td>
+<td>溢出判断</td>
+</tr>
+<tr>
+<td>OverflowFloat</td>
+<td>溢出判断</td>
+</tr>
+<tr>
+<td>OverflowInt</td>
+<td>溢出判断</td>
+</tr>
+<tr>
+<td>OverflowUint</td>
+<td>溢出判断</td>
+</tr>
+<tr>
+<td>Pointer</td>
+<td>返回 uintptr 适用于 slice</td>
+</tr>
+<tr>
+<td>Recv</td>
+<td>chan 接收</td>
+</tr>
+<tr>
+<td>Send</td>
+<td>chan 发送</td>
+</tr>
+<tr>
+<td>Set</td>
+<td>将 x 赋值给 v，类型要匹配</td>
+</tr>
+<tr>
+<td>SetBool</td>
+<td>Bool 赋值，需要先判断 CanSet () 为 true</td>
+</tr>
+<tr>
+<td>SetBytes</td>
+<td>Bytes 赋值</td>
+</tr>
+<tr>
+<td>SetCap</td>
+<td>slice 调整切片容量</td>
+</tr>
+<tr>
+<td>SetMapIndex</td>
+<td>map 索引赋值</td>
+</tr>
+<tr>
+<td>SetUint</td>
+<td>Unit 赋值</td>
+</tr>
+<tr>
+<td>SetPointer</td>
+<td>unsafe.Pointer 赋值</td>
+</tr>
+<tr>
+<td>SetString</td>
+<td>String 赋值</td>
+</tr>
+<tr>
+<td>Slice</td>
+<td>return v [i:j] 适用于 Array/Slict/String</td>
+</tr>
+<tr>
+<td>String</td>
+<td>return value 的 string 表示方法</td>
+</tr>
+<tr>
+<td>TryRecv</td>
+<td>chan 非阻塞接收</td>
+</tr>
+<tr>
+<td>TrySend</td>
+<td>chan 非阻塞发送</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>返回 value 的 Type</td>
+</tr>
+<tr>
+<td>UnsafeAddr</td>
+<td>返回指向 value 的 data 的指针</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/03/26/package-02/" title="反射包" target="_blank" rel="external">https://logan-liang.github.io/study/2021/03/26/package-02/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2021/03/31/performance-01/" title="性能调试：分析并优化程序"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2021/03/25/package-01/" title="内部包"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/03/26/package-02/';
+        
+        this.page.identifier = 'package-02';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

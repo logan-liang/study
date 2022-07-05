@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>GraphQL Schema和类型 | Logan的博客</title>
+  <meta name="description" content="系统类型（Type System）如果你之前见到过 GraphQL 查询，你就知道 GraphQL 查询语言基本上就是关于选择对象上的字段。因此，例如在下列查询中： 12345  hero &amp;#123;    name    appearsIn  &amp;#125;&amp;#125;  我们以一个特殊的对象 “root” 开始 选择其上的 hero 字段 对于 hero 返回的对象，我们选择 name 和 a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GraphQL Schema和类型">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/04/23/graphQL-02/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="系统类型（Type System）如果你之前见到过 GraphQL 查询，你就知道 GraphQL 查询语言基本上就是关于选择对象上的字段。因此，例如在下列查询中： 12345  hero &amp;#123;    name    appearsIn  &amp;#125;&amp;#125;  我们以一个特殊的对象 “root” 开始 选择其上的 hero 字段 对于 hero 返回的对象，我们选择 name 和 a">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-23T05:41:18.000Z">
+<meta property="article:modified_time" content="2022-07-05T01:34:08.962Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="GraphQL 入门">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/04/23/graphQL-02/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/Golang/">Golang</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL/">GraphQL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" rel="tag">GraphQL 入门</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" rel="tag">MySQL事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="tag">MySQL存储引擎</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" rel="tag">MySQL性能指标</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" rel="tag">MySQL插入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" rel="tag">MySQL索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" rel="tag">MySQL缓存</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="tag">MySQL通信过程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%94%81/" rel="tag">MySQL锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E4%BF%A1%E9%81%93/" rel="tag">信道</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" rel="tag">内部包</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%87%BD%E6%95%B0/" rel="tag">函数</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">基本结构和基本数据类型</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="tag">性能调优</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" rel="tag">控制结构</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" rel="tag">数组与切片</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" rel="tag">锁的应用</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" style="font-size: 13.67px;">GraphQL 入门</a> <a href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" style="font-size: 13px;">MySQL事务</a> <a href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" style="font-size: 13px;">MySQL存储引擎</a> <a href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" style="font-size: 13px;">MySQL性能指标</a> <a href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" style="font-size: 13px;">MySQL插入</a> <a href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" style="font-size: 13px;">MySQL索引</a> <a href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" style="font-size: 13px;">MySQL缓存</a> <a href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" style="font-size: 13px;">MySQL通信过程</a> <a href="/study/tags/MySQL%E9%94%81/" style="font-size: 13px;">MySQL锁</a> <a href="/study/tags/%E4%BF%A1%E9%81%93/" style="font-size: 13px;">信道</a> <a href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" style="font-size: 13.33px;">内部包</a> <a href="/study/tags/%E5%87%BD%E6%95%B0/" style="font-size: 13.33px;">函数</a> <a href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" style="font-size: 14px;">基本结构和基本数据类型</a> <a href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 13px;">性能调优</a> <a href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" style="font-size: 13.67px;">控制结构</a> <a href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" style="font-size: 13px;">数组与切片</a> <a href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" style="font-size: 13px;">锁的应用</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2022/07/">July 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-08/" class="title">MySQL-Query Cache</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T07:42:42.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-07/" class="title">MySQL-通信过程</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:51:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-06/" class="title">MySQL-性能指标</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:59.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-05/" class="title">MySQL-插入原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:55.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-01/" class="title">MySQL-索引原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T01:40:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="darft-graphQL-02" class="article article-type-darft" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      GraphQL Schema和类型
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/04/23/graphQL-02/" class="article-date">
+	  <time datetime="2021-04-23T05:41:18.000Z" itemprop="datePublished">2021-04-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/GraphQL/">GraphQL</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" rel="tag">GraphQL 入门</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/04/23/graphQL-02/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="系统类型（Type-System）"><a href="#系统类型（Type-System）" class="headerlink" title="系统类型（Type System）"></a>系统类型（Type System）</h2><p>如果你之前见到过 GraphQL 查询，你就知道 GraphQL 查询语言基本上就是关于选择对象上的字段。因此，例如在下列查询中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  hero &#123;</span><br><span class="line">    name</span><br><span class="line">    appearsIn</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>我们以一个特殊的对象 “root” 开始</li>
+<li>选择其上的 hero 字段</li>
+<li>对于 hero 返回的对象，我们选择 name 和 appearsIn 字段</li>
+</ul>
+<p>一个关于我们所需要的数据的确切描述依然很有意义，我们能选择什么字段？服务器会返回哪种对象？这些对象下有哪些字段可用？这便是引入 schema 的原因。</p>
+<p>每一个 GraphQL 服务都会定义一套类型，用以描述你可能从那个服务查询到的数据。每当查询到来，服务器就会根据 schema 验证并执行查询。</p>
+<h2 id="类型语言（Type-Language）"><a href="#类型语言（Type-Language）" class="headerlink" title="类型语言（Type Language）"></a>类型语言（Type Language）</h2><p>GraphQL 服务可以用任何语言编写，因为我们并不依赖于任何特定语言的句法句式（譬如 JavaScript）来与 GraphQL schema 沟通，我们定义了自己的简单语言，称之为 “GraphQL schema language” —— 它和 GraphQL 的查询语言很相似，让我们能够和 GraphQL schema 之间可以无语言差异地沟通。</p>
+<h2 id="对象类型和字段（Object-Types-and-Fields）"><a href="#对象类型和字段（Object-Types-and-Fields）" class="headerlink" title="对象类型和字段（Object Types and Fields）"></a>对象类型和字段（Object Types and Fields）</h2><p>一个 GraphQL schema 中的最基本的组件是对象类型，它就表示你可以从服务上获取到什么类型的对象，以及这个对象有什么字段。使用 GraphQL schema language，我们可以这样表示它：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type Character &#123;</span><br><span class="line">  name: String!</span><br><span class="line">  appearsIn: [Episode!]!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Character 是一个 GraphQL 对象类型，表示其是一个拥有一些字段的类型。你的 schema 中的大多数类型都会是对象类型。</li>
+<li>name 和 appearsIn 是 Character 类型上的字段。这意味着在一个操作 Character 类型的 GraphQL 查询中的任何部分，都只能出现 name 和 appearsIn 字段。</li>
+<li>String 是内置的标量类型之一 —— 标量类型是解析到单个标量对象的类型，无法在查询中对它进行次级选择。后面我们将细述标量类型。<br>&amp; String! 表示这个字段是非空的，GraphQL 服务保证当你查询这个字段后总会给你返回一个值。在类型语言里面，我们用一个感叹号来表示这个特性。</li>
+<li>[Episode!]! 表示一个 Episode 数组。因为它也是非空的，所以当你查询 appearsIn 字段的时候，你也总能得到一个数组（零个或者多个元素）。且由于 Episode! 也是非空的，你总是可以预期到数组中的每个项目都是一个 Episode 对象。</li>
+</ul>
+<h2 id="查询和变更类型（The-Query-and-Mutation-Types）"><a href="#查询和变更类型（The-Query-and-Mutation-Types）" class="headerlink" title="查询和变更类型（The Query and Mutation Types）"></a>查询和变更类型（The Query and Mutation Types）</h2><p>你的 schema 中大部分的类型都是普通对象类型，但是一个 schema 内有两个特殊类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">schema &#123;</span><br><span class="line">  query: Query &#x2F;&#x2F;查询</span><br><span class="line">  mutation: Mutation  &#x2F;&#x2F;变更</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="标量类型（Scalar-Types）"><a href="#标量类型（Scalar-Types）" class="headerlink" title="标量类型（Scalar Types）"></a>标量类型（Scalar Types）</h2><p>一个对象类型有自己的名字和字段，而某些时候，这些字段必然会解析到具体数据。这就是标量类型的来源：它们表示对应 GraphQL 查询的叶子节点。</p>
+<p>GraphQL 自带一组默认标量类型：</p>
+<ul>
+<li>Int：有符号 32 位整数。</li>
+<li>Float：有符号双精度浮点值。</li>
+<li>String：UTF‐8 字符序列。</li>
+<li>Boolean：true 或者 false。</li>
+<li>ID：ID 标量类型表示一个唯一标识符，通常用以重新获取对象或者作为缓存中的键。ID 类型使用和 String 一样的方式序列化；然而将其定义为 ID 意味着并不需要人类可读型。</li>
+</ul>
+<p>大部分的 GraphQL 服务实现中，都有自定义标量类型的方式。例如，我们可以定义一个 Date 类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scalar Date</span><br></pre></td></tr></table></figure>
+<p>然后就取决于我们的实现中如何定义将其序列化、反序列化和验证。例如，你可以指定 Date 类型应该总是被序列化成整型时间戳，而客户端应该知道去要求任何 date 字段都是这个格式。</p>
+<h2 id="枚举类型（Enumeration-Types）"><a href="#枚举类型（Enumeration-Types）" class="headerlink" title="枚举类型（Enumeration Types）"></a>枚举类型（Enumeration Types）</h2><p>也称作枚举（enum），枚举类型是一种特殊的标量，它限制在一个特殊的可选值集合内。这让你能够：</p>
+<ul>
+<li>验证这个类型的任何参数是可选值的的某一个</li>
+<li>与类型系统沟通，一个字段总是一个有限值集合的其中一个值。</li>
+</ul>
+<p>下面是一个用 GraphQL schema 语言表示的 enum 定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">enum Episode &#123;</span><br><span class="line">  NEWHOPE</span><br><span class="line">  EMPIRE</span><br><span class="line">  JEDI</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这表示无论我们在 schema 的哪处使用了 Episode，都可以肯定它返回的是 NEWHOPE、EMPIRE 和 JEDI 之一。</p>
+<h2 id="列表和非空（Lists-and-Non-Null）"><a href="#列表和非空（Lists-and-Non-Null）" class="headerlink" title="列表和非空（Lists and Non-Null）"></a>列表和非空（Lists and Non-Null）</h2><p>对象类型、标量以及枚举是 GraphQL 中你唯一可以定义的类型种类。但是当你在 schema 的其他部分使用这些类型时，或者在你的查询变量声明处使用时，你可以给它们应用额外的类型修饰符来影响这些值的验证。我们先来看一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type Character &#123;</span><br><span class="line">  name: String!</span><br><span class="line">  appearsIn: [Episode]!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此处我们使用了一个 String 类型，并通过在类型名后面添加一个感叹号!将其标注为非空。这表示我们的服务器对于这个字段，总是会返回一个非空值，如果它结果得到了一个空值，那么事实上将会触发一个 GraphQL 执行错误，以让客户端知道发生了错误。</p>
+<p>列表的运作方式也类似：在 GraphQL schema 语言中，我们通过将类型包在方括号（[ 和 ]）中的方式来标记列表。列表对于参数也是一样的运作方式，验证的步骤会要求对应值为数组。</p>
+<p>非空和列表修饰符可以组合使用。例如你可以要求一个非空字符串的数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myField: [String!]</span><br></pre></td></tr></table></figure>
+
+<p>这表示数组本身可以为空，但是其不能有任何空值成员。用 JSON 举例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">myField: null &#x2F;&#x2F; 有效</span><br><span class="line">myField: [] &#x2F;&#x2F; 有效</span><br><span class="line">myField: [&#39;a&#39;, &#39;b&#39;] &#x2F;&#x2F; 有效</span><br><span class="line">myField: [&#39;a&#39;, null, &#39;b&#39;] &#x2F;&#x2F; 错误</span><br></pre></td></tr></table></figure>
+
+<p>然后，我们来定义一个不可为空的字符串数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myField: [String]!</span><br></pre></td></tr></table></figure>
+<p>这表示数组本身不能为空，但是其可以包含空值成员：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">myField: null &#x2F;&#x2F; 错误</span><br><span class="line">myField: [] &#x2F;&#x2F; 有效</span><br><span class="line">myField: [&#39;a&#39;, &#39;b&#39;] &#x2F;&#x2F; 有效</span><br><span class="line">myField: [&#39;a&#39;, null, &#39;b&#39;] &#x2F;&#x2F; 有效</span><br></pre></td></tr></table></figure>
+
+<h2 id="接口（Interfaces）"><a href="#接口（Interfaces）" class="headerlink" title="接口（Interfaces）"></a>接口（Interfaces）</h2><p>一个接口是一个抽象类型，它包含某些字段，而对象类型必须包含这些字段，才能算实现了这个接口。</p>
+<p>例如，你可以用一个 Character 接口用以表示《星球大战》三部曲中的任何角色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">interface Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String!</span><br><span class="line">  friends: [Character]</span><br><span class="line">  appearsIn: [Episode]!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这意味着任何实现 Character 的类型都要具有这些字段，并有对应参数和返回类型。</p>
+<p>例如，这里有一些可能实现了 Character 的类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">type Human implements Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String!</span><br><span class="line">  friends: [Character]</span><br><span class="line">  appearsIn: [Episode]!</span><br><span class="line">  starships: [Starship]</span><br><span class="line">  totalCredits: Int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type Droid implements Character &#123;</span><br><span class="line">  id: ID!</span><br><span class="line">  name: String!</span><br><span class="line">  friends: [Character]</span><br><span class="line">  appearsIn: [Episode]!</span><br><span class="line">  primaryFunction: String</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见这两个类型都具备 Character 接口的所有字段，但也引入了其他的字段 totalCredits、starships 和 primaryFunction，这都属于特定的类型的角色。</p>
+<h2 id="联合类型（Union-Types）"><a href="#联合类型（Union-Types）" class="headerlink" title="联合类型（Union Types）"></a>联合类型（Union Types）</h2><p>联合类型和接口十分相似，但是它并不指定类型之间的任何共同字段。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">union SearchResult &#x3D; Human | Droid | Starship</span><br></pre></td></tr></table></figure>
+
+<p>在我们的schema中，任何返回一个 SearchResult 类型的地方，都可能得到一个 Human、Droid 或者 Starship。注意，联合类型的成员需要是具体对象类型；你不能使用接口或者其他联合类型来创造一个联合类型。</p>
+<h2 id="输入类型（Input-Types）"><a href="#输入类型（Input-Types）" class="headerlink" title="输入类型（Input Types）"></a>输入类型（Input Types）</h2><p>目前为止，我们只讨论过将例如枚举和字符串等标量值作为参数传递给字段，但是你也能很容易地传递复杂对象。这在变更（mutation）中特别有用，因为有时候你需要传递一整个对象作为新建对象。在 GraphQL schema language 中，输入对象看上去和常规对象一模一样，除了关键字是 input 而不是 type：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">input ReviewInput &#123;</span><br><span class="line">  stars: Int!</span><br><span class="line">  commentary: String</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以像这样在变更（mutation）中使用输入对象类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) &#123;</span><br><span class="line">  createReview(episode: $ep, review: $review) &#123;</span><br><span class="line">    stars</span><br><span class="line">    commentary</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;ep&quot;: &quot;JEDI&quot;,</span><br><span class="line">  &quot;review&quot;: &#123;</span><br><span class="line">    &quot;stars&quot;: 5,</span><br><span class="line">    &quot;commentary&quot;: &quot;This is a great movie!&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/04/23/graphQL-02/" title="GraphQL Schema和类型" target="_blank" rel="external">https://logan-liang.github.io/study/2021/04/23/graphQL-02/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2021/04/23/graphQL-03/" title="GraphQL 验证、执行、内省"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2021/04/23/graphQL-01/" title="GraphQL查询和变更"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/04/23/graphQL-02/';
+        
+        this.page.identifier = 'graphQL-02';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

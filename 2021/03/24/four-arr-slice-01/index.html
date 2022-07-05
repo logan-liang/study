@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>数组与切片 | Logan的博客</title>
+  <meta name="description" content="数组声明与初始化数组时具有相同唯一类型的一组已编号且长度固定的数据项序列。 数组元素可以通过索引（位置）来读取或修改，索引从0开始，第一个元素索引为0，第二个索引为1，以此类推。数组长度最大为2GB。 声明格式为： 1var arr1 [5]int Go语言中的数组是一种值类型，可以通过new()来创建。那么使用这种方式和正常声明有什么区别呢？ 这样的结果就是当把一个数组赋值给另一个时，需要再做一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数组与切片">
+<meta property="og:url" content="https://logan-liang.github.io/study/2021/03/24/four-arr-slice-01/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="数组声明与初始化数组时具有相同唯一类型的一组已编号且长度固定的数据项序列。 数组元素可以通过索引（位置）来读取或修改，索引从0开始，第一个元素索引为0，第二个索引为1，以此类推。数组长度最大为2GB。 声明格式为： 1var arr1 [5]int Go语言中的数组是一种值类型，可以通过new()来创建。那么使用这种方式和正常声明有什么区别呢？ 这样的结果就是当把一个数组赋值给另一个时，需要再做一">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-24T07:54:30.000Z">
+<meta property="article:modified_time" content="2022-07-05T01:32:52.628Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="数组与切片">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2021/03/24/four-arr-slice-01/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/Golang/">Golang</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL/">GraphQL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" rel="tag">GraphQL 入门</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" rel="tag">MySQL事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="tag">MySQL存储引擎</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" rel="tag">MySQL性能指标</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" rel="tag">MySQL插入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" rel="tag">MySQL索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" rel="tag">MySQL缓存</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="tag">MySQL通信过程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%94%81/" rel="tag">MySQL锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E4%BF%A1%E9%81%93/" rel="tag">信道</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" rel="tag">内部包</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%87%BD%E6%95%B0/" rel="tag">函数</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">基本结构和基本数据类型</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="tag">性能调优</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" rel="tag">控制结构</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" rel="tag">数组与切片</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" rel="tag">锁的应用</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" style="font-size: 13.67px;">GraphQL 入门</a> <a href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" style="font-size: 13px;">MySQL事务</a> <a href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" style="font-size: 13px;">MySQL存储引擎</a> <a href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" style="font-size: 13px;">MySQL性能指标</a> <a href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" style="font-size: 13px;">MySQL插入</a> <a href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" style="font-size: 13px;">MySQL索引</a> <a href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" style="font-size: 13px;">MySQL缓存</a> <a href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" style="font-size: 13px;">MySQL通信过程</a> <a href="/study/tags/MySQL%E9%94%81/" style="font-size: 13px;">MySQL锁</a> <a href="/study/tags/%E4%BF%A1%E9%81%93/" style="font-size: 13px;">信道</a> <a href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" style="font-size: 13.33px;">内部包</a> <a href="/study/tags/%E5%87%BD%E6%95%B0/" style="font-size: 13.33px;">函数</a> <a href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" style="font-size: 14px;">基本结构和基本数据类型</a> <a href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 13px;">性能调优</a> <a href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" style="font-size: 13.67px;">控制结构</a> <a href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" style="font-size: 13px;">数组与切片</a> <a href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" style="font-size: 13px;">锁的应用</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2022/07/">July 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-08/" class="title">MySQL-Query Cache</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T07:42:42.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-07/" class="title">MySQL-通信过程</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:51:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-06/" class="title">MySQL-性能指标</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:59.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-05/" class="title">MySQL-插入原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T05:50:55.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/05/Mysql-01/" class="title">MySQL-索引原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-05T01:40:03.000Z" itemprop="datePublished">2022-07-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-four-arr-slice-01" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      数组与切片
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2021/03/24/four-arr-slice-01/" class="article-date">
+	  <time datetime="2021-03-24T07:54:30.000Z" itemprop="datePublished">2021-03-24</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/Golang/">Golang</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" rel="tag">数组与切片</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/03/24/four-arr-slice-01/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="数组声明与初始化"><a href="#数组声明与初始化" class="headerlink" title="数组声明与初始化"></a>数组声明与初始化</h2><p>数组时具有相同<code>唯一类型</code>的一组已编号且长度固定的数据项序列。</p>
+<p>数组元素可以通过<code>索引</code>（位置）来读取或修改，索引从0开始，第一个元素索引为0，第二个索引为1，以此类推。数组长度最大为2GB。</p>
+<p>声明格式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var arr1 [5]int</span><br></pre></td></tr></table></figure>
+<p>Go语言中的数组是一种<code>值类型</code>，可以通过<code>new()</code>来创建。那么使用这种方式和正常声明有什么区别呢？</p>
+<p>这样的结果就是当把一个数组赋值给另一个时，需要再做一次数组内存的拷贝操作。</p>
+<h2 id="数组常量"><a href="#数组常量" class="headerlink" title="数组常量"></a>数组常量</h2><p>如果数组值已经提前知道了，那么可以通过<code>数组常量</code>的方法来初始化数组，而不用一次使用<code>[]=</code>方法。</p>
+<p>第一种变化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var arr&#x3D;[5]int&#123;1,2,3,4,5&#125;</span><br></pre></td></tr></table></figure>
+<p>注意 <code>[5]int</code> 可以从左边起开始忽略：<code>[10]int &#123;1, 2, 3&#125;</code> :这是一个有 10 个元素的数组，除了前三个元素外其他元素都为 <code>0</code>。</p>
+<p>第二种变化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var arrLazy &#x3D; [...]int&#123;5, 6, 7, 8, 22&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>...</code> 可同样可以忽略，从技术上说它们其实变化成了切片。</p>
+<p>第三种变化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var arrKeyValue &#x3D; [5]string&#123;3: &quot;Chris&quot;, 4: &quot;Ron&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只有索引 3 和 4 被赋予实际的值，其他元素都被设置为空的字符串</p>
+<h2 id="将数组传递给函数"><a href="#将数组传递给函数" class="headerlink" title="将数组传递给函数"></a>将数组传递给函数</h2><p>把一个大数组传递给函数会消耗很多内存。有两种方法可以避免这种现象：</p>
+<ul>
+<li>传递数组的指针</li>
+<li>使用数组的切片</li>
+</ul>
+<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>切片（slice）是对数组一个连续片段的引用，所以切片是一个引用类型。这个片段可以是整个数组，或者时由起始和终止索引标识的一些项的子集。</p>
+<p>切片是可以索引的，并且可以由<code>len()</code>函数获取长度。</p>
+<p>切片时一个长度可变的数组。</p>
+<p>切片提供了计算容量的函数<code>cap()</code>，可以测量切片最长可以达到多少。</p>
+<p>多个切片如果表示同一个数组的片段，它们可以共享数据；因此一个切片和相关数组的其它切片都是共享存储的，相反，不同的数组总是导标不同的存储。</p>
+<p><code>优点</code>因切片时引用，所以它们不需要使用额外的内存并且比使用数组更有效率，所以在go代码中切片比数组更常用。</p>
+<h3 id="创建切片"><a href="#创建切片" class="headerlink" title="创建切片"></a>创建切片</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slice:&#x3D;make([]int,len,cap)</span><br><span class="line">slice:&#x3D;new([]int)</span><br></pre></td></tr></table></figure>
+
+<h3 id="new-和make-的区别"><a href="#new-和make-的区别" class="headerlink" title="new()和make()的区别"></a>new()和make()的区别</h3><ul>
+<li><p>new(T) 为每个新的类型T分配一片内存，初始化为0并且返回类型为*T的内存地址，她适用于值类型数组和结构体，相当于<code>&amp;T&#123;&#125;</code></p>
+</li>
+<li><p>make(T) 返回一个类型为T的初始值，他只适用于3种内建的引用类型：切片、map和channel。</p>
+</li>
+</ul>
+<h3 id="切片重组"><a href="#切片重组" class="headerlink" title="切片重组"></a>切片重组</h3><p>改变切片长度的过程称之为切片重组 reslicing</p>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slice1 &#x3D; slice1[0:end]</span><br></pre></td></tr></table></figure>
+
+<h3 id="切片的复制与追加"><a href="#切片的复制与追加" class="headerlink" title="切片的复制与追加"></a>切片的复制与追加</h3><ul>
+<li><p>追加 append(s[]T,x …T):将0个或多个具有相同类型s的元素追加到切片后面并且返回新的切片；追加的元素必须和原切片的元素同类型。如果s的容量不足以存储新增元素，append会分配新的切片来保证已有切片元素和新增元素的存储。因此，返回的切片可能已经指向一个不同的相关数组了。append方法总是返回成功，除非系统内存耗尽。</p>
+</li>
+<li><p>复制 copy(dst,src []T) int: copy方法将类型为T的切片从原地址src拷贝到目标地址dst，覆盖dst的相关元素，并且返回拷贝的元素个数。原地址和目标地址可能会有重叠。拷贝个数时src和dst的长度最小值。如果src时字符串那么元素类型就是byte。如果你还想继续使用src，在拷贝结束后执行<code>src=dst</code>。</p>
+</li>
+</ul>
+<h3 id="map切片"><a href="#map切片" class="headerlink" title="map切片"></a>map切片</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	&#x2F;&#x2F; Version A:</span><br><span class="line">	items :&#x3D; make([]map[int]int, 5)</span><br><span class="line">	for i:&#x3D; range items &#123;</span><br><span class="line">		items[i] &#x3D; make(map[int]int, 1)</span><br><span class="line">		items[i][1] &#x3D; 2</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(&quot;Version A: Value of items: %v\n&quot;, items)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2021/03/24/four-arr-slice-01/" title="数组与切片" target="_blank" rel="external">https://logan-liang.github.io/study/2021/03/24/four-arr-slice-01/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2021/03/25/package-01/" title="内部包"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2021/03/24/three-func-02/" title="闭包"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2021/03/24/four-arr-slice-01/';
+        
+        this.page.identifier = 'four-arr-slice-01';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
