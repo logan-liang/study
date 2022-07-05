@@ -1,9 +1,9 @@
 ---
 title: 同步锁、读写锁、WaitGroup
 tags:
-  - Golang
-categories:
   - 锁的应用
+categories:
+  - Golang
 comments: true
 date: 2021-04-26 14:55:30
 ---

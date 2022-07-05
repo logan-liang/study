@@ -2,9 +2,9 @@
 layout: darft
 title: Channel
 tags:
-  - Golang
-categories:
   - 信道
+categories:
+  - Golang
 comments: true
 date: 2021-05-06 09:14:49
 ---

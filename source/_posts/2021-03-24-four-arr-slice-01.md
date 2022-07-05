@@ -1,9 +1,9 @@
 ---
 title: 数组与切片 
 tags:
-  - Golang
-categories:
   - 数组与切片
+categories:
+  - Golang
 comments: true
 date: 2021-03-24 15:54:30
 ---
