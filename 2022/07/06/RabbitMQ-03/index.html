@@ -17,21 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>性能调试：分析并优化程序 | Logan的博客</title>
-  <meta name="description" content="时间和内存消耗可以用这个便捷脚本xtime来测量： 12#!&#x2F;bin&#x2F;sh&#x2F;usr&#x2F;bin&#x2F;time -f &#39;%Uu %Ss %er %MkB %C&#39; &quot;$@&quot; 用 go test 调试我们可以用 gotest 标准的 -cpuprofile 和 -memprofile 标志向指定文件写入 CPU 或 内存使用情">
+  <title>RabbitMQ-防数据丢失 | Logan的博客</title>
+  <meta name="description" content="数据丢失场景一条消息整个过程要经历两次的网络传输：从生产者发送到RabbitMQ服务器，从RabbitMQ服务器发送到消费者。  存储在队列中，如果没有队列没有对消息持久化，RabbitMQ服务器宕机重启会丢失数据。 生产者发送消息到RabbitMQ服务器过程中，RabbitMQ服务器如果宕机停止服务，消息会丢失。 消费者从RabbitMQ服务器获取队列中存储的数据消费，但是消费者程序出错或者宕机">
 <meta property="og:type" content="article">
-<meta property="og:title" content="性能调试：分析并优化程序">
-<meta property="og:url" content="https://logan-liang.github.io/study/2021/03/31/performance-01/index.html">
+<meta property="og:title" content="RabbitMQ-防数据丢失">
+<meta property="og:url" content="https://logan-liang.github.io/study/2022/07/06/RabbitMQ-03/index.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="时间和内存消耗可以用这个便捷脚本xtime来测量： 12#!&#x2F;bin&#x2F;sh&#x2F;usr&#x2F;bin&#x2F;time -f &#39;%Uu %Ss %er %MkB %C&#39; &quot;$@&quot; 用 go test 调试我们可以用 gotest 标准的 -cpuprofile 和 -memprofile 标志向指定文件写入 CPU 或 内存使用情">
+<meta property="og:description" content="数据丢失场景一条消息整个过程要经历两次的网络传输：从生产者发送到RabbitMQ服务器，从RabbitMQ服务器发送到消费者。  存储在队列中，如果没有队列没有对消息持久化，RabbitMQ服务器宕机重启会丢失数据。 生产者发送消息到RabbitMQ服务器过程中，RabbitMQ服务器如果宕机停止服务，消息会丢失。 消费者从RabbitMQ服务器获取队列中存储的数据消费，但是消费者程序出错或者宕机">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-03-31T03:17:46.000Z">
-<meta property="article:modified_time" content="2022-07-05T01:33:52.748Z">
+<meta property="article:published_time" content="2022-07-06T09:54:21.000Z">
+<meta property="article:modified_time" content="2022-07-06T09:54:21.431Z">
 <meta property="article:author" content="Logan">
-<meta property="article:tag" content="性能调优">
+<meta property="article:tag" content="RabbitMQ-数据丢失">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://logan-liang.github.io/study/2021/03/31/performance-01/index.html">
+  <link rel="canonical" href="https://logan-liang.github.io/study/2022/07/06/RabbitMQ-03/index.html">
   
     <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
   
@@ -320,14 +320,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-performance-01" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-RabbitMQ-03" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      性能调试：分析并优化程序
+      RabbitMQ-防数据丢失
     </h1>
   
 
@@ -335,51 +335,51 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/study/2021/03/31/performance-01/" class="article-date">
-	  <time datetime="2021-03-31T03:17:46.000Z" itemprop="datePublished">2021-03-31</time>
+	<a href="/study/2022/07/06/RabbitMQ-03/" class="article-date">
+	  <time datetime="2022-07-06T09:54:21.000Z" itemprop="datePublished">2022-07-06</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/study/categories/Golang/">Golang</a>
+    <a class="article-category-link" href="/study/categories/RabbitMQ/">RabbitMQ</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="tag">性能调优</a>
+	<a class="article-tag-link-link" href="/study/tags/RabbitMQ-%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1/" rel="tag">RabbitMQ-数据丢失</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2021/03/31/performance-01/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2022/07/06/RabbitMQ-03/#comments" class="article-comment-link">Comments</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h3 id="时间和内存消耗"><a href="#时间和内存消耗" class="headerlink" title="时间和内存消耗"></a>时间和内存消耗</h3><p>可以用这个便捷脚本xtime来测量：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;sh</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;time -f &#39;%Uu %Ss %er %MkB %C&#39; &quot;$@&quot;</span><br></pre></td></tr></table></figure>
-<h3 id="用-go-test-调试"><a href="#用-go-test-调试" class="headerlink" title="用 go test 调试"></a>用 go test 调试</h3><p>我们可以用 gotest 标准的 -cpuprofile 和 -memprofile 标志向指定文件写入 CPU 或 内存使用情况报告</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go test -x -v -cpuprofile&#x3D;prof.out -file x_test.go</span><br></pre></td></tr></table></figure>
-
-<h3 id="用pprof-调试"><a href="#用pprof-调试" class="headerlink" title="用pprof 调试"></a>用pprof 调试</h3><p>你可以在单机程序 progexec 中引入 runtime/pprof 包；这个包以 pprof 可视化工具需要的格式写入运行时报告数据。对于 CPU 性能分析来说你需要添加一些代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var cpuprofile &#x3D; flag.String(&quot;cpuprofile&quot;, &quot;&quot;, &quot;write cpu profile to file&quot;)</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	flag.Parse()</span><br><span class="line">	if *cpuprofile !&#x3D; &quot;&quot; &#123;</span><br><span class="line">		f, err :&#x3D; os.Create(*cpuprofile)</span><br><span class="line">		if err !&#x3D; nil &#123;</span><br><span class="line">			log.Fatal(err)</span><br><span class="line">		&#125;</span><br><span class="line">		pprof.StartCPUProfile(f)</span><br><span class="line">		defer pprof.StopCPUProfile()</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>代码定义了一个名为 cpuprofile 的 flag，调用 Go flag 库来解析命令行 flag，如果命令行设置了 cpuprofile flag，则开始 CPU 性能分析并把结果重定向到那个文件。（os.Create 用拿到的名字创建了用来写入分析数据的文件）。这个分析程序最后需要在程序退出之前调用 StopCPUProfile 来刷新挂起的写操作到文件中；我们用 defer 来保证这一切会在 main 返回时触发。</p>
-<p>现在用这个 flag 运行程序：<code>progexec -cpuprofile=progexec.prof</code></p>
-<p>然后可以像这样用 gopprof 工具：<code>gopprof progexec progexec.prof</code></p>
-<p>gopprof 程序是 Google pprofC++ 分析器的一个轻微变种；关于此工具更多的信息，参见<a target="_blank" rel="noopener" href="https://github.com/gperftools/gperftools%E3%80%82">https://github.com/gperftools/gperftools。</a></p>
-<p>如果开启了 CPU 性能分析，Go 程序会以大约每秒 100 次的频率阻塞，并记录当前执行的 goroutine 栈上的程序计数器样本。</p>
-<p>此工具一些有趣的命令：</p>
+        <h3 id="数据丢失场景"><a href="#数据丢失场景" class="headerlink" title="数据丢失场景"></a>数据丢失场景</h3><p>一条消息整个过程要经历两次的网络传输：从生产者发送到RabbitMQ服务器，从RabbitMQ服务器发送到消费者。</p>
 <ul>
-<li><code>topN</code>:用来展示分析结果中最开头的 N 份样本，例如：top5 它会展示在程序运行期间调用最频繁的 5 个函数</li>
-<li><code>web 或 web 函数名</code>:该命令生成一份 SVG 格式的分析数据图表，并在网络浏览器中打开它（还有一个 gv 命令可以生成 PostScript 格式的数据，并在 GhostView 中打开，这个命令需要安装 graphviz）。函数被表示成不同的矩形（被调用越多，矩形越大），箭头指示函数调用链</li>
-<li><code>list 函数名 或 weblist 函数名</code>:展示对应函数名的代码行列表，第 2 列表示当前行执行消耗的时间，这样就很好地指出了运行过程中消耗最大的代码<br>如果发现函数 runtime.mallocgc（分配内存并执行周期性的垃圾回收）调用频繁，那么是应该进行内存分析的时候了。找出垃圾回收频繁执行的原因，和内存大量分配的根源</li>
+<li>存储在队列中，如果没有队列没有对消息持久化，RabbitMQ服务器宕机重启会丢失数据。</li>
+<li>生产者发送消息到RabbitMQ服务器过程中，RabbitMQ服务器如果宕机停止服务，消息会丢失。</li>
+<li>消费者从RabbitMQ服务器获取队列中存储的数据消费，但是消费者程序出错或者宕机而没有正确消费，导致数据丢失。</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var memprofile &#x3D; flag.String(&quot;memprofile&quot;, &quot;&quot;, &quot;write memory profile to this file&quot;)</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">CallToFunctionWhichAllocatesLotsOfMemory()</span><br><span class="line">if *memprofile !&#x3D; &quot;&quot; &#123;</span><br><span class="line">	f, err :&#x3D; os.Create(*memprofile)</span><br><span class="line">	if err !&#x3D; nil &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	pprof.WriteHeapProfile(f)</span><br><span class="line">	f.Close()</span><br><span class="line">	return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>用 -memprofile flag 运行这个程序：<code>progexec -memprofile=progexec.mprof</code></p>
+<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><h4 id="消息持久化"><a href="#消息持久化" class="headerlink" title="消息持久化"></a>消息持久化</h4><p>需要设置Exchange和Queue为持久化。具体设置查看工具包。</p>
+<h4 id="消息确认机制-confim"><a href="#消息确认机制-confim" class="headerlink" title="消息确认机制-confim"></a>消息确认机制-confim</h4><p>生产者设置channel为confirm模式。</p>
+<p>一旦信道进入confirm模式，所有在该信道上面发布的消息都会被指派一个唯一的ID（从1开始），一旦消息被投递到所有匹配的队列之后，broker就会发送一个确认给生产者（包含消息的唯一ID），这就使得生产者直到消息已经正确到达目的队列了，如果消息和队列是可持久化的，那么确认消息会将消息写入磁盘之后发出，broker回传给生产者的确认消息中deliver-tag域包含了确认消息的序列号，此外broker也可以设置basic.ack的multiple域，表示到这个序列号之前的所有消息都已经得到了处理。</p>
+<p>confirm模式最大的好处在于它是异步的，一旦发布一条消息，生产者应用程序就可以在等信道返回确认的同时继续发送下一条信息，当消息最终得到确认之后，生产者应用便可以通过回调方法来处理该确认消息，如果MQ因为自身内部错误导致消息丢失，就会发送一条nack消息，生产者应用程序同样可以在回调方法中处理该nack消息。</p>
+<h5 id="编程模式"><a href="#编程模式" class="headerlink" title="编程模式"></a>编程模式</h5><ul>
+<li>普通模式：每发送一条消息后，调用waitForConfirms()方法，等待服务器端confirm。实际上是一种串行confirm。</li>
+<li>批量confirm模式：每发送一批消息后，调用waitForConfirms()方法，等待服务器端confirm。</li>
+<li>异步confirm模式：提供一个回调方法，服务端confirm了一条或者多条消息后Client端会回调这个方法。</li>
+</ul>
+<h5 id="基于异步confirm模式的实现思路"><a href="#基于异步confirm模式的实现思路" class="headerlink" title="基于异步confirm模式的实现思路"></a>基于异步confirm模式的实现思路</h5><p>主要解决问题：在生产者发送到rabbit server时，因网络问题导致投递失败，从而数据丢失。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">func publish()&#123;</span><br><span class="line">........</span><br><span class="line">log.Printf(&quot;enabling publishing confirms.&quot;)</span><br><span class="line">if err :&#x3D; channel.Confirm(false); err !&#x3D; nil &#123;</span><br><span class="line">	return fmt.Errorf(&quot;Channel could not be put into confirm mode: %s&quot;, err)</span><br><span class="line">&#125;</span><br><span class="line">confirms :&#x3D; channel.NotifyPublish(make(chan amqp.Confirmation, 1))</span><br><span class="line"></span><br><span class="line">defer confirmOne(confirms)</span><br><span class="line">.......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func confirmOne(confirms &lt;-chan amqp.Confirmation) &#123;</span><br><span class="line">	log.Printf(&quot;waiting for confirmation of one publishing&quot;)</span><br><span class="line"></span><br><span class="line">	if confirmed :&#x3D; &lt;-confirms; confirmed.Ack &#123;</span><br><span class="line">		log.Printf(&quot;confirmed delivery with delivery tag: %d&quot;, confirmed.DeliveryTag)</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		log.Printf(&quot;failed delivery of delivery tag: %d&quot;, confirmed.DeliveryTag)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="事务机制ACK"><a href="#事务机制ACK" class="headerlink" title="事务机制ACK"></a>事务机制ACK</h4><p>主要解决问题：消费者从队列中获取到消息后，会直接确认签收，假设消费者宕机或者程序出现异常，数据没有正常消费，这种情况就会出现数据丢失。</p>
+<p>思路：设置消费者ack为手动，同时将失败的数据记录到库或者日志，通过定时任务或者人为的方式解决此问题。切记，一定要手动释放掉。</p>
 
       
     </div>
@@ -389,7 +389,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://logan-liang.github.io/study/2021/03/31/performance-01/" title="性能调试：分析并优化程序" target="_blank" rel="external">https://logan-liang.github.io/study/2021/03/31/performance-01/</a>
+      <a href="https://logan-liang.github.io/study/2022/07/06/RabbitMQ-03/" title="RabbitMQ-防数据丢失" target="_blank" rel="external">https://logan-liang.github.io/study/2022/07/06/RabbitMQ-03/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -437,13 +437,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/study/2021/04/23/graphQL-01/" title="GraphQL查询和变更"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/study/2021/03/26/package-02/" title="反射包"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/study/2022/07/05/RabbitMQ-02/" title="RabbitMQ-延时队列"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
@@ -524,9 +520,9 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
     <script defer>
     var disqus_config = function () {
         
-            this.page.url = 'https://logan-liang.github.io/study/2021/03/31/performance-01/';
+            this.page.url = 'https://logan-liang.github.io/study/2022/07/06/RabbitMQ-03/';
         
-        this.page.identifier = 'performance-01';
+        this.page.identifier = 'RabbitMQ-03';
     };
     (function() { 
         var d = document, s = d.createElement('script');  
