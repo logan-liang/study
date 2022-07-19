@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Kubelet | Logan的博客</title>
+  <meta name="description" content="Kubelet每个Node节点上都运行一个Kubelet服务进程，默认监听1250端口，接收并执行Master发来的指令，管理Pod及Pod中的容器。每个Kubelet进程会在API Server上注册所在Node节点的信息，定期向Master节点汇报节点的资源使用情况，并通过cAdvisor监控节点和容器的资源。 节点管理节点管理主要是节点自注册和节点状态更新：  Kubelet可以通过设置启动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubelet">
+<meta property="og:url" content="https://logan-liang.github.io/study/2022/07/19/k8s-04/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="Kubelet每个Node节点上都运行一个Kubelet服务进程，默认监听1250端口，接收并执行Master发来的指令，管理Pod及Pod中的容器。每个Kubelet进程会在API Server上注册所在Node节点的信息，定期向Master节点汇报节点的资源使用情况，并通过cAdvisor监控节点和容器的资源。 节点管理节点管理主要是节点自注册和节点状态更新：  Kubelet可以通过设置启动">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-19T09:15:40.000Z">
+<meta property="article:modified_time" content="2022-07-19T09:15:40.206Z">
+<meta property="article:author" content="Logan">
+<meta property="article:tag" content="k8s-核心组件">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://logan-liang.github.io/study/2022/07/19/k8s-04/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/study/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/logan-liang" target="_blank">
+          <img class="img-circle img-rotate" src="/study/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Logan</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">攻城狮</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> ShangHai, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/study/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/study/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/study/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/study/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/study/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/study/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/study/categories/Git/">Git</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/Golang/">Golang</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/GraphQL/">GraphQL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/MySQL/">MySQL</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/study/categories/Redis/">Redis</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/CSP/" rel="tag">CSP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Channel/" rel="tag">Channel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Command/" rel="tag">Command</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Context/" rel="tag">Context</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GC/" rel="tag">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" rel="tag">GraphQL 入门</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" rel="tag">MySQL事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="tag">MySQL存储引擎</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" rel="tag">MySQL性能指标</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" rel="tag">MySQL插入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" rel="tag">MySQL索引</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" rel="tag">MySQL缓存</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" rel="tag">MySQL通信过程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/MySQL%E9%94%81/" rel="tag">MySQL锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/RabbitMQ-%E4%BA%A4%E6%8D%A2%E6%9C%BA/" rel="tag">RabbitMQ-交换机</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/RabbitMQ-%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">RabbitMQ-延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/RabbitMQ-%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1/" rel="tag">RabbitMQ-数据丢失</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Rebase/" rel="tag">Rebase</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Redis-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" rel="tag">Redis-分布式锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Redis-%E6%8C%81%E4%B9%85%E5%8C%96/" rel="tag">Redis-持久化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">Redis-数据类型</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Redis-%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/" rel="tag">Redis-淘汰机制</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/Redis-%E7%BC%93%E5%AD%98/" rel="tag">Redis-缓存</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/k8s-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" rel="tag">k8s-核心组件</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/k8s-%E8%B5%84%E6%BA%90%E5%AF%B9%E8%B1%A1/" rel="tag">k8s-资源对象</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" rel="tag">内部包</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%87%BD%E6%95%B0/" rel="tag">函数</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">基本结构和基本数据类型</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="tag">性能调优</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" rel="tag">控制结构</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" rel="tag">数组与切片</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" rel="tag">锁的应用</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/study/tags/CSP/" style="font-size: 13px;">CSP</a> <a href="/study/tags/Channel/" style="font-size: 13px;">Channel</a> <a href="/study/tags/Command/" style="font-size: 13px;">Command</a> <a href="/study/tags/Context/" style="font-size: 13px;">Context</a> <a href="/study/tags/GC/" style="font-size: 13px;">GC</a> <a href="/study/tags/GraphQL-%E5%85%A5%E9%97%A8/" style="font-size: 13.5px;">GraphQL 入门</a> <a href="/study/tags/MySQL%E4%BA%8B%E5%8A%A1/" style="font-size: 13px;">MySQL事务</a> <a href="/study/tags/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" style="font-size: 13px;">MySQL存储引擎</a> <a href="/study/tags/MySQL%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87/" style="font-size: 13px;">MySQL性能指标</a> <a href="/study/tags/MySQL%E6%8F%92%E5%85%A5/" style="font-size: 13px;">MySQL插入</a> <a href="/study/tags/MySQL%E7%B4%A2%E5%BC%95/" style="font-size: 13px;">MySQL索引</a> <a href="/study/tags/MySQL%E7%BC%93%E5%AD%98/" style="font-size: 13px;">MySQL缓存</a> <a href="/study/tags/MySQL%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B/" style="font-size: 13px;">MySQL通信过程</a> <a href="/study/tags/MySQL%E9%94%81/" style="font-size: 13px;">MySQL锁</a> <a href="/study/tags/RabbitMQ-%E4%BA%A4%E6%8D%A2%E6%9C%BA/" style="font-size: 13px;">RabbitMQ-交换机</a> <a href="/study/tags/RabbitMQ-%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 13px;">RabbitMQ-延时队列</a> <a href="/study/tags/RabbitMQ-%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1/" style="font-size: 13px;">RabbitMQ-数据丢失</a> <a href="/study/tags/Rebase/" style="font-size: 13px;">Rebase</a> <a href="/study/tags/Redis-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 13px;">Redis-分布式锁</a> <a href="/study/tags/Redis-%E6%8C%81%E4%B9%85%E5%8C%96/" style="font-size: 13px;">Redis-持久化</a> <a href="/study/tags/Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" style="font-size: 13px;">Redis-数据类型</a> <a href="/study/tags/Redis-%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/" style="font-size: 13px;">Redis-淘汰机制</a> <a href="/study/tags/Redis-%E7%BC%93%E5%AD%98/" style="font-size: 13px;">Redis-缓存</a> <a href="/study/tags/k8s-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" style="font-size: 13.75px;">k8s-核心组件</a> <a href="/study/tags/k8s-%E8%B5%84%E6%BA%90%E5%AF%B9%E8%B1%A1/" style="font-size: 14px;">k8s-资源对象</a> <a href="/study/tags/%E5%86%85%E9%83%A8%E5%8C%85/" style="font-size: 13.25px;">内部包</a> <a href="/study/tags/%E5%87%BD%E6%95%B0/" style="font-size: 13.25px;">函数</a> <a href="/study/tags/%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" style="font-size: 14px;">基本结构和基本数据类型</a> <a href="/study/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 13px;">性能调优</a> <a href="/study/tags/%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84/" style="font-size: 13.5px;">控制结构</a> <a href="/study/tags/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87/" style="font-size: 13px;">数组与切片</a> <a href="/study/tags/%E9%94%81%E7%9A%84%E5%BA%94%E7%94%A8/" style="font-size: 13px;">锁的应用</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2022/07/">July 2022</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/study/archives/2021/03/">March 2021</a><span class="archive-list-count">17</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/19/k8s-14/" class="title">Namespace</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-19T09:16:35.000Z" itemprop="datePublished">2022-07-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/19/k8s-13/" class="title">Job</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-19T09:16:29.000Z" itemprop="datePublished">2022-07-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/19/k8s-12/" class="title">Ingress</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-19T09:16:23.000Z" itemprop="datePublished">2022-07-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/19/k8s-11/" class="title">Deployment</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-19T09:16:18.000Z" itemprop="datePublished">2022-07-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/study/categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/study/2022/07/19/k8s-10/" class="title">DaemonSet</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-07-19T09:16:14.000Z" itemprop="datePublished">2022-07-19</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-k8s-04" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Kubelet
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/study/2022/07/19/k8s-04/" class="article-date">
+	  <time datetime="2022-07-19T09:15:40.000Z" itemprop="datePublished">2022-07-19</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/study/categories/Kubernetes/">Kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/study/tags/k8s-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" rel="tag">k8s-核心组件</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/study/2022/07/19/k8s-04/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="Kubelet"><a href="#Kubelet" class="headerlink" title="Kubelet"></a>Kubelet</h3><p>每个Node节点上都运行一个Kubelet服务进程，默认监听1250端口，接收并执行Master发来的指令，管理Pod及Pod中的容器。每个Kubelet进程会在API Server上注册所在Node节点的信息，定期向Master节点汇报节点的资源使用情况，并通过cAdvisor监控节点和容器的资源。</p>
+<h3 id="节点管理"><a href="#节点管理" class="headerlink" title="节点管理"></a>节点管理</h3><p>节点管理主要是节点自注册和节点状态更新：</p>
+<ul>
+<li>Kubelet可以通过设置启动参数<code>--register-node</code>来确定是否向API Server注册自己。</li>
+<li>如果Kubelet没有选择自注册模式，则需要用户自己设置Node资源信息，同时需要告知Kubelet集群上的API Server的位置；</li>
+<li>Kubelet在启动时通过API Server注册节点信息，并定时向API Server发送节点新消息，API Server在接收到新消息后，将信息写入etcd。</li>
+</ul>
+<h3 id="Pod管理"><a href="#Pod管理" class="headerlink" title="Pod管理"></a>Pod管理</h3><h4 id="获取Pod清单"><a href="#获取Pod清单" class="headerlink" title="获取Pod清单"></a>获取Pod清单</h4><p>向Kubelet提供节点上需要运行的Pod清单的方法：</p>
+<ul>
+<li>文件：启动参数 –config指定的配置目录下的文件（默认 /etc/kubernetes/manifests）。该文件每20秒重新检查一次（可配置）。</li>
+<li>HTTP endpoint（URL）：启动参数 –manifest-url设置。每20秒检查一次这个端点（可配置）。</li>
+<li>API Server：通过API Server监听etcd目录，同步Pod清单。</li>
+<li>HTTP Server：kubelet侦听HTTP请求，并响应简单的API已提交新的Pod清单。</li>
+</ul>
+<h4 id="通过API-Server获取Pod清单及创建Pod的过程"><a href="#通过API-Server获取Pod清单及创建Pod的过程" class="headerlink" title="通过API Server获取Pod清单及创建Pod的过程"></a>通过API Server获取Pod清单及创建Pod的过程</h4><p>Kubelet 通过 API Server Client(Kubelet 启动时创建)使用 Watch 加 List 的方式监听 “/registry/nodes/$ 当前节点名” 和 “/registry/pods” 目录，将获取的信息同步到本地缓存中。</p>
+<p>Kubelet 监听 etcd，所有针对 Pod 的操作都将会被 Kubelet 监听到。如果发现有新的绑定到本节点的 Pod，则按照 Pod 清单的要求创建该 Pod。</p>
+<p>如果发现本地的 Pod 被修改，则 Kubelet 会做出相应的修改，比如删除 Pod 中某个容器时，则通过 Docker Client 删除该容器。 如果发现删除本节点的 Pod，则删除相应的 Pod，并通过 Docker Client 删除 Pod 中的容器。</p>
+<p>Kubelet 读取监听到的信息，如果是创建和修改 Pod 任务，则执行如下处理：</p>
+<ul>
+<li>为该Pod创建一个数据目录；</li>
+<li>从API Server读取该Pod清单；</li>
+<li>为该Pod挂载外部卷；</li>
+<li>下载Pod用到的Secret；</li>
+<li>检查已经在节点上运行的Pod，如果该Pod没有容器或Pause容器没有启动，则先停止Pod里所有的容器的进程。如果在Pod中有需要删除的容器，则删除这些容器。</li>
+<li>用”kubernetes/pause”镜像为每个Pod创建一个容器，Pause容器用于接管Pod中所有其他容器的网络。每创建一个新的Pod，Kubelet都会创建一个Pause容器，然后创建其他容器。</li>
+<li>为Pod中的每个容器做如下处理：<ul>
+<li>为容器计算一个hash值，然后用容器的名字去Dokcer查询对应容器的hash值。若查找到容器，且两者hash值不同，则停止Docker中容器的进程，并停止与之关联的Pause容器的进程；若两者相同，则不做任何处理。</li>
+<li>如果容器被终止了，且容器没有指定的resetPolicy，则不做任何处理。</li>
+<li>调用Docker Client下载容器镜像，调用Docker Client运行容器。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Static-Pod"><a href="#Static-Pod" class="headerlink" title="Static Pod"></a>Static Pod</h4><p>所有以非API Server方式创建的Pod都叫Static Pod。Kubelet将Static Pod的状态汇报给API Server，API Server为该Static Pod创建一个Mirror Pod和其相匹配。Mirror Pod的状态将真实反映Static Pod的状态。当Static Pod被删除时，与之相对应的Mirror Pod也会被删除。</p>
+<h3 id="容器健康检查"><a href="#容器健康检查" class="headerlink" title="容器健康检查"></a>容器健康检查</h3><p>Pod通过两类探针检查容器的健康状态：</p>
+<ul>
+<li>LivenessProbe探针：用于判断容器是否健康，告诉Kubelet一个容器什么时候处于不健康的状态。如果LivenessProbe探针探测到容器不健康，则Kubelet将伤处该容器，并根据容器的重启策略做相应的处理。<br>如果一个容器不包含LivenessProbe探针，那么Kubelet认为该容器的LivenessProbe探针返回的值永远是”Success”;</li>
+<li>ReadinessProbe：用于判断容器是否启动完成且准备接收请求。如果ReadinessProbe探针探测到失败，则Pod的状态将被修改。Endpoint Controller将从Service的Endpoint中删除包含该容器所在Pod的IP地址的Endpoint条目。</li>
+</ul>
+<p>kubelet定期调用容器中的LivenessProbe探针来诊断容器的健康状况。LivenessProbe包含如下三种实现方式：</p>
+<ul>
+<li>ExecAction：在容器内部执行一个命令，如果该命令的退出状态码为0，则表明容器健康；</li>
+<li>TCPSocketAction：通过容器的IP地址和端口号及路径调用HTTP GET方法，如果响应的状态码大于等于200且小于等于400，则认为容器状态健康。</li>
+</ul>
+<h3 id="Kubelet-Eviction（驱逐）"><a href="#Kubelet-Eviction（驱逐）" class="headerlink" title="Kubelet Eviction（驱逐）"></a>Kubelet Eviction（驱逐）</h3><p>Kubelet会监控资源的使用情况，并使用驱逐机制防止计算和存储资源耗尽。在驱逐时，Kubelet将Pod的所有容器停止，并将PodPhase设置为Failed。</p>
+<p>Kubelet定期（housekeeping-interval）检查系统的资源是否达到了预先配置的驱逐阈值，包括：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">memory.available</span><br><span class="line">nodefs.available</span><br><span class="line">nodefs.inodesFree</span><br><span class="line">imagefs.available</span><br><span class="line">imagefs.inodesFree</span><br></pre></td></tr></table></figure>
+<p>这些驱逐阈值可以使用百分比，也可以使用绝对值</p>
+<p>这些驱逐信号可以分为软驱逐和硬驱逐</p>
+<ul>
+<li>软驱逐（soft Eviction）：配合驱逐宽限期一起使用。系统资源达到软驱逐阈值并在超过宽限期之后才会执行驱逐动作。</li>
+<li>硬驱逐（Hard Eviction）：系统资源达到硬驱逐阈值时立即执行驱逐动作。</li>
+</ul>
+<h4 id="驱逐动做包括获首届点资源和驱逐用户Pod两种："><a href="#驱逐动做包括获首届点资源和驱逐用户Pod两种：" class="headerlink" title="驱逐动做包括获首届点资源和驱逐用户Pod两种："></a>驱逐动做包括获首届点资源和驱逐用户Pod两种：</h4><ul>
+<li>回收节点资源<ul>
+<li>配置了imagefs阈值时<ul>
+<li>达到nodefs阈值：删除已停止的Pod</li>
+<li>达到imagefs阈值：删除未使用的镜像</li>
+</ul>
+</li>
+<li>未配置imagefs阈值时<ul>
+<li>达到nodefs阈值时，按照删除已停止的Pod和删除未使用镜像的顺序清理资源</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>驱逐用户Pod<ul>
+<li>驱逐顺序为：BestEffort、Burstable、Guaranteed</li>
+<li>配置了imagefs阈值时<ul>
+<li>达到nodefs阈值，基于nodefs用量驱逐</li>
+<li>达到imagefs阈值，基于imagefs用量驱逐</li>
+</ul>
+</li>
+<li>未配置imagefs阈值时<ul>
+<li>达到nodefs阈值时，按照总磁盘使用驱逐</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="kubelet工作原理"><a href="#kubelet工作原理" class="headerlink" title="kubelet工作原理"></a>kubelet工作原理</h3><p>如下kubelet内部组件结构图所示，kubelet由许多内部组件构成</p>
+<ul>
+<li>Kubelet API，包括10250端口的认证API、4194端口的cAdvisor API、10255端口的只读API以及10248端口的健康检查API</li>
+<li>syncLoop：从API或者manifest目录接收Pod更新，发送到podWorkers处理，大量使用channel处理异步请求</li>
+<li>辅助的manager，如cAdvisor、PLEG、Volume Manager等，处理syncLoop以外的其他工作</li>
+<li>CRI：容器执行引擎接口，负责与container runtime shim通信</li>
+<li>容器执行引擎，如dockershim、rkt等</li>
+<li>网络插件，目前支持CNI和kubenet</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://logan-liang.github.io/study/2022/07/19/k8s-04/" title="Kubelet" target="_blank" rel="external">https://logan-liang.github.io/study/2022/07/19/k8s-04/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/logan-liang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/study/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/logan-liang" target="_blank"><span class="text-dark">Logan</span><small class="ml-1x">攻城狮</small></a></h3>
+        <div>欢迎学习分享</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/study/2022/07/19/k8s-05/" title="kube-proxy"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/study/2022/07/19/k8s-03/" title="Controller Manager"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/logan-liang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/study/js/plugin.min.js"></script>
+
+
+<script src="/study/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/study/',
+        CONTENT_URL: '/study/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/study/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://logan-liang.github.io/study/2022/07/19/k8s-04/';
+        
+        this.page.identifier = 'k8s-04';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + '' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
